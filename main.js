@@ -577,13 +577,28 @@ function getStartupShortcutPath() {
 }
 
 function isAutoStartEnabled() {
-    // Check both: Startup folder shortcut AND registry
+    if (app.isPackaged) {
+        return app.getLoginItemSettings().openAtLogin;
+    }
     const startupExists = fs.existsSync(getStartupShortcutPath());
     const registryAutoStart = app.getLoginItemSettings().openAtLogin;
     return startupExists || registryAutoStart;
 }
 
 function setAutoStartVbs(enable) {
+    if (app.isPackaged) {
+        try {
+            app.setLoginItemSettings({
+                openAtLogin: enable,
+                path: process.execPath
+            });
+            logRuntime(`Packaged auto-start set to: ${enable}`);
+        } catch (err) {
+            logRuntime(`Packaged auto-start error: ${err.message}`);
+        }
+        return;
+    }
+
     const startupPath = getStartupShortcutPath();
 
     // Clear old registry-based auto-start (electron.exe without args = broken)

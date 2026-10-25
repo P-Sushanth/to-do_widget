@@ -1,5 +1,7 @@
 # Node dependencies
 node_modules/
+dist/
+release/
 
 # Runtime and log files
 widget_runtime.log

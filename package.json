@@ -1,11 +1,57 @@
 {
-  "name": "windows11-todo-widget",
+  "name": "to-do-widget",
+  "productName": "Desktop To-Do Widget",
   "version": "1.0.0",
   "description": "A modern Windows 11 desktop to-do task widget that stays on your homescreen",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "dev": "electron ."
+    "dev": "electron .",
+    "build": "electron-builder --win",
+    "build:portable": "electron-builder --win portable",
+    "build:installer": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.sushanth.desktop-todo-widget",
+    "productName": "Desktop To-Do Widget",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "assets/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "To-Do Widget",
+      "uninstallDisplayName": "Desktop To-Do Widget"
+    },
+    "portable": {
+      "artifactName": "Desktop-To-Do-Widget-Portable.exe"
+    }
   },
   "keywords": [
     "windows11",
@@ -14,9 +60,10 @@
     "desktop-widget",
     "fluent-design"
   ],
-  "author": "",
+  "author": "Sushanth Popuri",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^45.0.0"
+    "electron": "^45.0.0",
+    "electron-builder": "^26.18.0"
   }
 }

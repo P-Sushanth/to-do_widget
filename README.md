@@ -40,40 +40,52 @@ A lightweight, zero-latency desktop To-Do widget built specifically for Windows 
 
 ## 🚀 Installation Guide
 
-### Prerequisites
-Before running the widget, ensure you have the following installed on your Windows machine:
-- **Windows 10 or Windows 11** (64-bit)
-- **Node.js** (v18.0.0 or later recommended) & **npm** — [Download Node.js](https://nodejs.org/)
+### Method 1: Download Prebuilt Executable (.exe) — Recommended
+
+No Node.js or terminal required! Choose either option from the [GitHub Releases](https://github.com/P-Sushanth/to-do_widget/releases) or the `dist/` folder:
+
+1. **Setup Installer** (`Desktop To-Do Widget Setup 1.0.0.exe`):
+   - Double-click to install like any standard Windows application.
+   - Automatically creates **Desktop** and **Start Menu** shortcuts.
+   - Includes full Windows Add/Remove Programs uninstallation support.
+
+2. **Portable Executable** (`Desktop-To-Do-Widget-Portable.exe`):
+   - Single standalone `.exe`.
+   - No installation needed — just double-click anywhere and it runs instantly.
 
 ---
 
-### Step-by-Step Setup
+### Method 2: Run from Source / Developer Setup
 
-#### 1. Clone the Repository
-Clone this repository to your local machine:
-```powershell
-git clone https://github.com/P-Sushanth/to-do_widget.git
-cd to-do_widget
-```
+#### Prerequisites
+- **Windows 10 or Windows 11** (64-bit)
+- **Node.js** (v18.0.0 or later) & **npm** — [Download Node.js](https://nodejs.org/)
 
-#### 2. Install Dependencies
-Install the required Electron packages:
-```powershell
-npm install
-```
+#### Step-by-Step Developer Setup
+1. **Clone the Repository**:
+   ```powershell
+   git clone https://github.com/P-Sushanth/to-do_widget.git
+   cd to-do_widget
+   ```
+2. **Install Dependencies**:
+   ```powershell
+   npm install
+   ```
+3. **Run Locally**:
+   ```powershell
+   npm start
+   ```
+4. **Build Your Own `.exe` Installers**:
+   ```powershell
+   npm run build
+   ```
+   The compiled `.exe` files will be generated in the `dist/` directory.
 
-#### 3. 1-Click System Installation
-Run the installer to configure your environment:
-- **Option A (Quickest)**: Double-click `install.bat`
-- **Option B (PowerShell)**: Run the following command in PowerShell:
-```powershell
-powershell -ExecutionPolicy Bypass -File .\install.ps1
-```
-
-This installer automatically configures:
-- 📌 **Desktop Shortcut** (`To-Do Widget.lnk`)
-- 📂 **Start Menu Shortcut**
-- 🚀 **Windows Startup** (`shell:startup`) for silent automatic launch upon login
+5. **1-Click Script Installation (Optional Dev Shortcuts)**:
+   - Double-click `install.bat` or run:
+     ```powershell
+     powershell -ExecutionPolicy Bypass -File .\install.ps1
+     ```
 
 ---
 
