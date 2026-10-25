@@ -1,0 +1,22 @@
+{
+  "name": "windows11-todo-widget",
+  "version": "1.0.0",
+  "description": "A modern Windows 11 desktop to-do task widget that stays on your homescreen",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron ."
+  },
+  "keywords": [
+    "windows11",
+    "widget",
+    "todo",
+    "desktop-widget",
+    "fluent-design"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^45.0.0"
+  }
+}
