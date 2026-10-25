@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desktop Tasks</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-black">
+
+    <!-- Main Widget Container -->
+    <div id="widget-container" class="widget-container">
+        
+        <!-- Minimal Collapsed Header Bar (Visible ONLY when collapsed to show tasks) -->
+        <div id="collapsed-bar" class="collapsed-bar">
+            <div class="collapsed-drag-area">
+                <span class="collapsed-title">Tasks</span>
+                <span id="collapsed-badge" class="collapsed-badge">0</span>
+            </div>
+            <div class="collapsed-actions no-drag">
+                <button id="btn-uncollapse" class="icon-btn-minimal" title="Expand Controls">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- FULL HEADER BAR -->
+        <header id="full-header" class="widget-header">
+            <div class="header-left">
+                <h1 class="widget-title">Tasks</h1>
+            </div>
+
+            <div class="header-actions no-drag">
+                <!-- Search Toggle -->
+                <button id="btn-search-toggle" class="header-icon-btn" title="Search Tasks (Ctrl+F)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+
+                <!-- Lock Position -->
+                <button id="btn-lock-pos" class="header-icon-btn" title="Lock Position">
+                    <svg id="icon-unlock" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
+                    <svg id="icon-lock" class="hidden" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                </button>
+
+                <!-- Collapse to Tasks Only -->
+                <button id="btn-mini-mode" class="header-icon-btn" title="Collapse to Only Tasks">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+                </button>
+
+                <!-- Settings -->
+                <button id="btn-settings" class="header-icon-btn" title="Settings">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                </button>
+
+                <!-- Collapse / Mini Mode Button -->
+                <button id="btn-minimize" class="header-icon-btn close-style" title="Collapse Widget">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search Drawer (Slide down) -->
+        <div id="search-bar" class="search-bar-container hidden no-drag">
+            <div class="search-input-wrap">
+                <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="search-input" placeholder="Search tasks..." autocomplete="off">
+                <button id="btn-search-clear" class="search-clear-btn hidden">&times;</button>
+            </div>
+        </div>
+
+        <!-- Category Filter Tabs: strictly Personal and Work (+ All) -->
+        <div id="category-bar" class="categories-bar no-drag">
+            <button class="cat-pill active" data-cat="All">All</button>
+            <button class="cat-pill" data-cat="Personal">Personal</button>
+            <button class="cat-pill" data-cat="Work">Work</button>
+        </div>
+
+        <!-- Status Filter & Sort Row -->
+        <div id="filter-bar" class="filter-sort-row no-drag">
+            <div class="status-filters">
+                <button class="status-filter-btn active" data-filter="all">All</button>
+                <button class="status-filter-btn" data-filter="pending">Pending</button>
+                <button class="status-filter-btn" data-filter="completed">Done</button>
+            </div>
+            <div class="sort-select-wrapper">
+                <select id="sort-select" class="sort-select" title="Sort tasks">
+                    <option value="date-asc">Date asc</option>
+                    <option value="date-desc">Date dsc</option>
+                    <option value="a-z">a-z</option>
+                    <option value="z-a">z-a</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- MAIN TASK LIST CONTAINER (Scrollable) -->
+        <main class="task-list-wrapper no-drag" id="task-list-wrapper">
+            <!-- Active Tasks -->
+            <div id="active-tasks-list" class="tasks-group"></div>
+
+            <!-- Completed Tasks Collapsible Group -->
+            <div id="completed-group-wrap" class="completed-group-wrap hidden">
+                <button id="toggle-completed-btn" class="toggle-completed-btn">
+                    <svg id="completed-chevron" class="chevron-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <span>Completed (<span id="completed-count-label">0</span>)</span>
+                </button>
+                <div id="completed-tasks-list" class="tasks-group completed-group"></div>
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="empty-state hidden">
+                <p class="empty-title">No tasks</p>
+            </div>
+        </main>
+
+        <!-- BOTTOM DOCK: QUICK ADD TASK INPUT -->
+        <footer id="quick-add-footer" class="quick-add-footer no-drag">
+            <form id="add-task-form" class="add-task-form">
+                <div class="quick-add-input-box">
+                    <input type="text" id="task-input-title" placeholder="Add a task..." autocomplete="off">
+                    
+                    <div class="quick-add-options">
+                        <!-- Category Switcher Pill (Personal / Work) -->
+                        <button type="button" id="btn-toggle-category" class="picker-pill" title="Category: Personal or Work">
+                            <span id="category-label">Personal</span>
+                        </button>
+
+                        <!-- Google Tasks Style Date Picker Pill with Selection Box for Show Daily -->
+                        <div class="option-dropdown-wrapper">
+                            <button type="button" id="btn-due-date-picker" class="picker-pill" title="Set Date & Recurrence">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                <span id="due-date-picker-label">Date</span>
+                            </button>
+
+                            <!-- Google Tasks Style Popover -->
+                            <div id="date-popover" class="google-tasks-date-popover hidden">
+                                <div class="popover-quick-dates">
+                                    <button type="button" class="quick-date-btn" data-date="today">Today</button>
+                                    <button type="button" class="quick-date-btn" data-date="tomorrow">Tomorrow</button>
+                                </div>
+                                <div class="popover-date-input-row">
+                                    <input type="date" id="popover-native-date" class="popover-date-input">
+                                </div>
+                                <!-- Selection Box for Show Daily (like in Google Tasks) -->
+                                <div class="popover-daily-row">
+                                    <label class="daily-checkbox-label">
+                                        <input type="checkbox" id="popover-check-daily">
+                                        <span class="custom-chk-box"></span>
+                                        <span class="daily-text">Show daily</span>
+                                    </label>
+                                </div>
+                                <div class="popover-actions">
+                                    <button type="button" id="btn-clear-date" class="popover-clear-btn">Clear</button>
+                                    <button type="button" id="btn-apply-date" class="popover-done-btn">Done</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btn-submit-task" class="submit-add-btn" title="Add (Enter)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </footer>
+
+        <!-- SETTINGS DRAWER (Cleaned & Minimal) -->
+        <div id="settings-drawer" class="settings-drawer hidden no-drag">
+            <div class="settings-header">
+                <h3>Settings</h3>
+                <button id="btn-close-settings" class="drawer-close-btn">&times;</button>
+            </div>
+            <div class="settings-content">
+
+
+                <!-- Startup with Windows -->
+                <div class="setting-item toggle-row">
+                    <div class="setting-label-group">
+                        <span class="setting-title">Launch on Windows Startup</span>
+                        <span class="setting-desc">Runs when Windows starts</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="toggle-autostart" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Pin Corner Actions -->
+                <div class="setting-item actions-item" style="display: flex; gap: 8px;">
+                    <button id="btn-pin-top-left" class="settings-action-btn" style="flex: 1;">
+                        📌 Pin Top-Left
+                    </button>
+                    <button id="btn-pin-top-right" class="settings-action-btn" style="flex: 1;">
+                        📌 Pin Top-Right
+                    </button>
+                </div>
+
+                <!-- Reset Widget -->
+                <div class="setting-item actions-item">
+                    <button id="btn-reset-pos" class="settings-action-btn">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+                        Reset Position
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inline Task Edit Modal -->
+        <div id="task-edit-modal" class="modal-backdrop hidden no-drag">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h4>Edit Task</h4>
+                    <button id="btn-close-edit" class="drawer-close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="edit-task-title" class="edit-input" placeholder="Task description">
+                    <div class="modal-row">
+                        <label>Category:</label>
+                        <select id="edit-task-category" class="modal-select">
+                            <option value="Personal">Personal</option>
+                            <option value="Work">Work</option>
+                        </select>
+                    </div>
+                    <div class="modal-row">
+                        <label>Due Date:</label>
+                        <input type="date" id="edit-task-date" class="modal-date">
+                    </div>
+                    <div class="modal-row">
+                        <label>Repeat:</label>
+                        <label class="daily-checkbox-label">
+                            <input type="checkbox" id="edit-task-daily">
+                            <span class="custom-chk-box"></span>
+                            <span class="daily-text">Show daily</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="btn-cancel-edit" class="btn-secondary">Cancel</button>
+                    <button id="btn-save-edit" class="btn-primary">Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast / Undo Bar -->
+        <div id="toast-bar" class="toast-bar hidden no-drag">
+            <span id="toast-message">Task deleted</span>
+            <button id="btn-toast-undo" class="toast-undo-btn">Undo</button>
+        </div>
+
+    </div>
+
+    <!-- Main Logic Script -->
+    <script src="renderer.js"></script>
+</body>
+</html>
