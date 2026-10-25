@@ -27,7 +27,7 @@ Write-Host "PIDs: $($pids -join ', ')"
     param([IntPtr]$hwnd, [IntPtr]$lparam)
     [uint32]$procId = 0
     [WinInspector]::GetWindowThreadProcessId($hwnd, [ref]$procId) | Out-Null
-    if ($pids -contains $procId) {
+    if ($pids -contains [int]$procId) {
         $vis = [WinInspector]::IsWindowVisible($hwnd)
         $rect = New-Object RECT
         [WinInspector]::GetWindowRect($hwnd, [ref]$rect) | Out-Null

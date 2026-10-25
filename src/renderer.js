@@ -42,7 +42,6 @@ const iconUnlock = document.getElementById('icon-unlock');
 const iconLock = document.getElementById('icon-lock');
 const btnMiniMode = document.getElementById('btn-mini-mode');
 const btnSettings = document.getElementById('btn-settings');
-const btnMinimize = document.getElementById('btn-minimize');
 
 // Search Bar
 const searchBar = document.getElementById('search-bar');
@@ -670,11 +669,6 @@ btnSettings.addEventListener('click', () => {
 
 btnCloseSettings.addEventListener('click', () => {
     settingsDrawer.classList.add('hidden');
-});
-
-btnMinimize.addEventListener('click', () => {
-    applyCollapseMode(!state.settings.miniMode);
-    persistState();
 });
 
 // Status filter buttons

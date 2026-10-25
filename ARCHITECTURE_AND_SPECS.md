@@ -75,7 +75,7 @@ In Windows 11, pressing <kbd>Win</kbd> + <kbd>D</kbd> minimizes all top-level ap
 1. `minimizable: false` is configured on `BrowserWindow`.
 2. `mainWindow.on('minimize', ...)` intercepts the event, cancels default minimization, and executes a multi-stage restore cycle (`10ms`, `50ms`, `150ms`, `300ms`, `500ms`) to counter Windows Explorer's asynchronous desktop toggle animation.
 3. `mainWindow.on('hide', ...)` automatically restores visibility if an external call attempts to hide the window.
-4. Title bar minimize button (`-`) collapses the widget to mini mode instead of hiding it from the screen.
+4. Single "Collapse to Tasks Only" button collapses the widget to mini mode instead of redundant duplicate buttons.
 
 ### 4.2. Magnetic Edge & Corner Pinning
 Located in `main.js` under `snapBounds(bounds)`:
@@ -89,11 +89,12 @@ Located in `main.js` under `snapBounds(bounds)`:
 - Both axes evaluate independently, enabling automatic flush corner pinning for Top-Left `(0, 0)`, Top-Right, Bottom-Left, and Bottom-Right.
 - Debounced by `100ms` on `moved` and `resized` to ensure native mouse dragging remains buttery smooth.
 
-### 4.3. Elevation & Quick Summon Hotkeys
-The widget sits on the desktop homescreen (`setAlwaysOnTop(false)`). When a user is inside full-screen apps (like Chrome or VS Code):
-- Pressing <kbd>F9</kbd> or <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> elevates the widget to the front (`setAlwaysOnTop(true, 'screen-saver')`).
-- Pressing the shortcut again drops the widget back to the desktop homescreen (`setAlwaysOnTop(false)`).
-- Launching the Desktop shortcut while the app is already running brings the widget to front via `app.on('second-instance')`.
+### 4.3. Pure Desktop Wallpaper Layer & Quick Summon Hotkeys
+The widget sits strictly on the desktop wallpaper plane (`alwaysOnTop: false`):
+- All normal applications (browsers, editors, file manager) naturally sit on top of the widget.
+- When focused or summoned via <kbd>F9</kbd> / <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>, it focuses to receive input and immediately ensures `alwaysOnTop: false` (with blur-based auto-lowering).
+- Clicking any other window or pressing Alt+Tab blurs the widget, instantly ensuring it stays beneath active apps on the wallpaper.
+- Launching the Desktop shortcut while the app is already running activates the widget without forcing permanent top-most elevation.
 
 ---
 

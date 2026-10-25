@@ -116,10 +116,18 @@ function elevateWidget() {
     if (!mainWindow || mainWindow.isDestroyed()) return;
     if (mainWindow.isMinimized()) mainWindow.restore();
     mainWindow.show();
-    mainWindow.setAlwaysOnTop(true, 'screen-saver');
+    // Momentarily elevate to bring to foreground over active apps
+    mainWindow.setAlwaysOnTop(true);
     mainWindow.moveTop();
     app.focus({ steal: true });
     mainWindow.focus();
+    // Immediately release alwaysOnTop so the widget lives strictly on the wallpaper layer
+    setTimeout(() => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.setAlwaysOnTop(false);
+            logRuntime('Widget returned to desktop wallpaper layer (alwaysOnTop=false).');
+        }
+    }, 150);
     isElevated = true;
     logRuntime(`elevateWidget finished. isAlwaysOnTop=${mainWindow.isAlwaysOnTop()}, isVisible=${mainWindow.isVisible()}`);
 }
@@ -132,9 +140,10 @@ function lowerWidget() {
 }
 
 function toggleSummon() {
-    logRuntime(`toggleSummon called. Current isElevated=${isElevated}`);
+    logRuntime(`toggleSummon called. isFocused=${mainWindow && mainWindow.isFocused()}`);
     if (!mainWindow || mainWindow.isDestroyed()) return;
-    if (isElevated) {
+    if (mainWindow.isFocused()) {
+        mainWindow.blur();
         lowerWidget();
     } else {
         elevateWidget();
@@ -148,8 +157,13 @@ if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', () => {
-        logRuntime('Second instance launched. Elevating widget to front.');
-        elevateWidget();
+        logRuntime('Second instance launched. Showing widget on desktop wallpaper.');
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            if (mainWindow.isMinimized()) mainWindow.restore();
+            mainWindow.show();
+            mainWindow.setAlwaysOnTop(false);
+            mainWindow.focus();
+        }
     });
 }
 
@@ -237,6 +251,15 @@ function createWindow() {
                     mainWindow.setAlwaysOnTop(false);
                 }
             }, 50);
+        }
+    });
+
+    // When focus is lost (blur), strictly enforce alwaysOnTop=false so widget sits behind other windows
+    mainWindow.on('blur', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.setAlwaysOnTop(false);
+            isElevated = false;
+            logRuntime('Widget blurred: strictly kept on desktop wallpaper layer.');
         }
     });
 
