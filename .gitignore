@@ -1,0 +1,20 @@
+# Node dependencies
+node_modules/
+
+# Runtime and log files
+widget_runtime.log
+*.log
+test_snap_out.txt
+
+# Operating System files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# IDE and tooling
+.vscode/
+.idea/
+.gemini/
+.agents/
