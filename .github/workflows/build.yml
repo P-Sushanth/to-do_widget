@@ -7,6 +7,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -26,6 +29,8 @@ jobs:
 
       - name: Build Installer and Portable Executables
         run: npm run build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
@@ -35,12 +40,23 @@ jobs:
             dist/*.exe
             !dist/*__uninstaller.exe
 
-      - name: Release to GitHub (on tags)
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
+          tag_name: v1.0.0
+          name: "Desktop To-Do Widget v1.0.0"
+          body: |
+            ## Desktop To-Do Widget v1.0.0 📌
+
+            Zero-latency, pitch-black desktop To-Do widget for Windows 11 designed to live natively on your wallpaper plane.
+
+            ### 📥 Download Prebuilt Executables:
+            - **`Desktop To-Do Widget Setup 1.0.0.exe`** — Standard Windows installer. Automatically adds Desktop and Start Menu shortcuts with icon.
+            - **`Desktop-To-Do-Widget-Portable.exe`** — Standalone portable executable. No installation needed; run anywhere.
           files: |
             dist/*.exe
             !dist/*__uninstaller.exe
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
