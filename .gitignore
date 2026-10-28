@@ -5,6 +5,7 @@ dist-native/
 build_native/
 release/
 *.zip
+*.exe
 
 # Runtime and log files
 widget_runtime.log

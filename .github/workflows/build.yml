@@ -43,6 +43,7 @@ jobs:
         with:
           name: Desktop-To-Do-Widget-Windows
           path: |
+            Desktop-To-Do-Widget-Setup.exe
             Desktop-To-Do-Widget-Native.zip
             dist-native/DesktopToDoWidget.exe
             dist/*.exe
@@ -80,16 +81,20 @@ jobs:
 
             ### 📥 Download Options:
 
-            #### ⭐ Recommended: Native Windows Edition (~1.5 MB)
-            - **`Desktop-To-Do-Widget-Native.zip`** (**1.56 MB**)
-              - **How to install:** Download, extract anywhere, and double-click `install-native.bat` (or run `DesktopToDoWidget.exe` directly as a portable app).
-              - **RAM usage:** ~35–45 MB (single native process)
-              - **Disk footprint:** ~2.2 MB total
+            #### ⭐ Recommended: 1-Click Installer Executable (.exe)
+            - **[`Desktop-To-Do-Widget-Setup.exe`](https://github.com/P-Sushanth/to-do_widget/releases/download/${{ steps.release_tag.outputs.tag }}/Desktop-To-Do-Widget-Setup.exe)** (**1.67 MB**)
+              - **No repo cloning or extraction needed!** Just download and double-click to install.
+              - Automatically creates Desktop and Start Menu shortcuts, sets Windows auto-start, and runs live on your wallpaper.
 
-            #### 📦 Electron Edition (Legacy / Developers)
+            #### 📦 Portable No-Install Zip
+            - **[`Desktop-To-Do-Widget-Native.zip`](https://github.com/P-Sushanth/to-do_widget/releases/download/${{ steps.release_tag.outputs.tag }}/Desktop-To-Do-Widget-Native.zip)** (**1.56 MB**)
+              - Portable standalone package for running from any folder or USB drive.
+
+            #### 🛠️ Electron Edition (Legacy / Developers)
             - **`Desktop To-Do Widget Setup 1.1.0.exe`** — Traditional Electron NSIS installer (~122 MB).
             - **`Desktop-To-Do-Widget-Portable.exe`** — Traditional Electron standalone portable executable (~111 MB).
           files: |
+            Desktop-To-Do-Widget-Setup.exe
             Desktop-To-Do-Widget-Native.zip
             dist-native/DesktopToDoWidget.exe
             dist/*.exe

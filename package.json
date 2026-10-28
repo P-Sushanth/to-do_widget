@@ -1,7 +1,7 @@
 {
   "name": "to-do-widget",
   "productName": "Desktop To-Do Widget",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A modern Windows 11 desktop to-do task widget that stays on your homescreen",
   "main": "main.js",
   "scripts": {

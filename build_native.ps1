@@ -69,14 +69,47 @@ if ($LASTEXITCODE -ne 0) {
     throw "Compilation failed with exit code $LASTEXITCODE"
 }
 
+# Compile 1-Click Standalone Windows Setup Executable (~1.6 MB)
+Write-Host ">>> Building Standalone 1-Click Setup Installer..." -ForegroundColor Cyan
+$payloadZip = Join-Path $scriptDir "build_native\payload.zip"
+if (Test-Path $payloadZip) { Remove-Item $payloadZip -Force }
+Compress-Archive -Path "$outputDir\*" -DestinationPath $payloadZip -Force
+
+$setupSource = Join-Path $scriptDir "src-native\Installer.cs"
+$setupExe = Join-Path $scriptDir "Desktop-To-Do-Widget-Setup.exe"
+
+$setupArgs = @(
+    "/nologo",
+    "/target:winexe",
+    "/optimize+",
+    "/platform:x64",
+    "/win32icon:$iconPath",
+    "/reference:System.dll",
+    "/reference:System.Drawing.dll",
+    "/reference:System.Windows.Forms.dll",
+    "/reference:System.IO.Compression.dll",
+    "/reference:System.IO.Compression.FileSystem.dll",
+    "/resource:$payloadZip,payload.zip",
+    "/out:$setupExe",
+    "$setupSource"
+)
+
+& $cscPath $setupArgs
+
+if ($LASTEXITCODE -ne 0) {
+    throw "Setup executable compilation failed with exit code $LASTEXITCODE"
+}
+
 Write-Host "`n========================================================" -ForegroundColor Green
 Write-Host ">>> BUILD SUCCESSFUL!" -ForegroundColor Green
 Write-Host "========================================================" -ForegroundColor Green
 
 $exeSize = (Get-Item $exeOutput).Length / 1KB
+$setupSize = (Get-Item $setupExe).Length / 1MB
 $totalSize = (Get-ChildItem -Recurse $outputDir -File | Measure-Object -Property Length -Sum).Sum / 1MB
 
 Write-Host ("DesktopToDoWidget.exe Size: {0:N2} KB" -f $exeSize) -ForegroundColor Yellow
+Write-Host ("Standalone Setup Installer: {0:N2} MB" -f $setupSize) -ForegroundColor Yellow
 Write-Host ("Entire Distribution Folder Size: {0:N2} MB" -f $totalSize) -ForegroundColor Yellow
-Write-Host "Location: $outputDir\DesktopToDoWidget.exe" -ForegroundColor Cyan
+Write-Host "Standalone Installer: $setupExe" -ForegroundColor Cyan
 Write-Host "========================================================`n" -ForegroundColor Green
