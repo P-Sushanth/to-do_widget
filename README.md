@@ -1,115 +1,167 @@
 # Desktop To-Do Widget 📌
 
-A lightweight, zero-latency desktop To-Do widget built specifically for Windows 11. Engineered with a pure pitch-black aesthetic, ClearType font rendering, magnetic flush edge/corner snapping, and desktop homescreen persistence that stays on your wallpaper **no matter what**.
+[![Windows 11](https://img.shields.io/badge/Windows-11%20%7C%2010-0078D4?logo=windows&logoColor=white)](https://github.com/P-Sushanth/to-do_widget)
+[![Size](https://img.shields.io/badge/Size-~2.2%20MB-brightgreen)](#-installation-guide)
+[![RAM](https://img.shields.io/badge/RAM-~35%20MB-success)](#-key-features)
+[![No Electron](https://img.shields.io/badge/Runtime-Native%20WebView2-blue)](#method-1-ultra-lightweight-native-windows-edition-2-mb--recommended-)
+
+A sleek, ultra-lightweight desktop To-Do widget built specifically for Windows 10 & 11. Designed to live permanently on your desktop wallpaper like a real gadget, with **flush magnetic snapping**, **real-time edge/corner resizing**, a **full-spectrum color picker**, and **zero-latency persistence** that stays on your screen even when you press <kbd>Win</kbd> + <kbd>D</kbd> (*Show Desktop*).
+
+Now available in an **Ultra-Lightweight Native Windows Edition (~2 MB)** powered by the Windows built-in Microsoft Edge engine — eliminating the 300 MB bloat of traditional Electron apps while cutting RAM usage by 75%!
 
 ---
 
 ## 🌟 Key Features
 
-### 1. Persistent Desktop Homescreen Pinning
-- **Native Desktop Layer**: Sits natively on your desktop wallpaper plane (`alwaysOnTop: false`) like an authentic desktop gadget.
-- **Immune to `Win + D` (Show Desktop)**: Minimization commands are intercepted and restored across Windows DWM animation cycles, ensuring the widget never disappears when toggling the desktop.
-- **No Taskbar Clutter**: Runs with `skipTaskbar: true` to prevent cluttering your taskbar.
-- **Position Lock**: Click **🔒 Lock** in the header to prevent accidental window movement while interacting.
-- **Position Memory**: Remembers its exact screen coordinates across reboots.
+### 1. 🪟 True Desktop Homescreen Persistence
+- **Native Wallpaper Plane**: Sits on the desktop background layer (`alwaysOnTop: false`). Normal windows naturally sit over it when you work.
+- **Immune to `Win + D`**: Minimization calls from Windows are intercepted and restored, ensuring the widget never disappears when toggling the desktop.
+- **No Taskbar Clutter**: Runs without cluttering your taskbar.
+- **Position Lock (🔒)**: Click the lock icon in the header to freeze the widget in place and avoid accidental movement or resizing.
+- **Position & Size Memory**: Automatically remembers its exact screen position and custom dimensions across reboots.
 
-### 2. Flush Magnetic Edge & Corner Snapping
-- **Flush Snapping (0px Offset)**: Dragging near the screen boundary magnetically snaps the widget flush against the display edge without awkward gaps.
-- **4-Corner Snapping**: Dragging to the Top-Left, Top-Right, Bottom-Left, or Bottom-Right corner pins the widget directly into place.
-- **One-Click Pinning**: Right-click the system tray icon or open Settings to snap to **Top-Left** or **Top-Right** with a single click.
+### 2. 🧲 Magnetic Flush Edge & Corner Snapping
+- **0px Flush Snapping**: Dragging near any screen boundary automatically snaps the widget flush (0px offset) against the display edge without gaps.
+- **4-Corner Snap**: Dragging near any corner cleanly pins the widget into place.
+- **One-Click Pinning**: Open the Settings drawer or right-click the system tray icon to snap to **Top-Left** or **Top-Right** with one click.
 
-### 3. Pure Black Minimalist Aesthetics
-- **Pure Black Palette**: `#000000` pitch-black background with deep `#0a0a0a` cards and crisp `#1e1e1e` borders.
-- **Zero Blur / No Translucency**: Solid, high-contrast theme eliminates text fuzziness and visual clutter.
-- **ClearType Subpixel Rendering**: High-DPI font optimizations ensure razor-sharp typography on 125% and 150% Windows scaling.
+### 3. 📐 Real-Time Edge & Corner Resizing
+- **Every Edge & Corner**: Drag from the **left**, **right**, **top**, **bottom**, or any of the **4 corners** to resize the widget to your liking.
+- **Visual Corner Grip**: A subtle diagonal grip indicator at the bottom-right corner provides an intuitive handle for diagonal resizing.
+- **Minimum Size Safeguard**: Enforces a minimum size of `280 × 220` so content always remains clear and readable.
 
-### 4. Task Management & Productivity
-- **Quick-Add Bar**: Add tasks with a single keystroke.
-- **Personal & Work Categories**: Focused categorization with `All`, `Personal`, and `Work` filter pills.
-- **Google Tasks-Style Date Popover**: Quick scheduling with **Today**, **Tomorrow**, native date picker, and **Show daily** recurrence.
-- **Sorting Options**: Sort by `Date asc`, `Date dsc`, `a-z`, or `z-a`.
-- **Collapsible Mini Mode**: Collapse the widget into a compact view displaying remaining pending tasks.
-- **Undo Toast**: 5-second undo toast for accidental task deletion.
+### 4. 🎨 Full-Spectrum Color & Theme Studio
+- **Full Spectrum Color Studio**: Accessible directly via Settings (`⚙`).
+  - **2D Canvas Box**: Interactive saturation and brightness grid.
+  - **360° Hue Slider**: Full rainbow spectrum to choose any hue.
+  - **Shade / Lightness Slider**: Fine-tune depth from deep pitch black to bright tints.
+  - **Hex Input**: Type or paste any hex code (`#ff4500`, `#3b82f6`, etc.).
+  - **System Eyedropper**: Sample colors directly from your wallpaper or screen.
+  - **10 Curated Presets**: Pitch Black, Obsidian Navy, Deep Plum, Forest Emerald, Velvet Wine, Cyberpunk Teal, Espresso, Titanium Slate, Midnight Indigo, and Steel Blue.
+  - **Default Button**: One click to restore the original Pure Pitch Black (`#000000`).
+- **Dynamic Button & Accent Shades**: Selecting a color doesn't just change the background — all buttons (`+` Add, "Done", "Save", checkboxes), active category tabs, and status filter pills dynamically adopt matching shades of that color with high contrast!
 
-### 5. Quick Summon Hotkeys & System Tray
-- **Global Hotkeys**: Press <kbd>F9</kbd> or <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> anywhere in Windows to temporarily bring the widget in front of active windows, and press again to return it to the desktop.
-- **System Tray Menu**: Right-click for quick actions: lock position, pin to corners, toggle mini mode, or quit.
-- **Windows Startup**: Automatically starts when Windows boots.
+### 5. ⚡ Task Management & Google Tasks Date Recurrence
+- **Quick-Add**: Type your task title and hit <kbd>Enter</kbd>.
+- **Strictly Two Categories**: `Personal` and `Work` tabs (+ `All` view).
+- **Google Tasks-Style Date Popover**: Quick scheduling with **Today**, **Tomorrow**, native date input, and **Show daily** recurrence checkbox.
+- **4 Predictable Sort Modes**: `Date asc`, `Date dsc`, `a-z`, `z-a`.
+- **Collapsible Mini Mode**: Collapse the widget into a compact view showing only pending tasks.
+- **Undo Toast**: 5-second popup banner to instantly restore accidentally deleted tasks.
 
----
-
-## 🚀 Installation & Running
-
-### Method 1: Ultra-Lightweight Native Windows Edition (~2 MB) — Recommended ⭐
-
-No Electron, no Node.js required! Uses the Windows built-in Microsoft Edge engine:
-- **Total Disk Footprint:** **~2.2 MB** *(99.3% smaller than standard 300MB apps)*
-- **Memory (RAM) Usage:** **~30–45 MB** *(vs ~180MB)*
-- **1-Click Install:** Double-click `install-native.bat` to install shortcuts to your Desktop, Start Menu, and Windows Startup.
-- **Portable Zip:** Extract `Desktop-To-Do-Widget-Native.zip` and run `DesktopToDoWidget.exe` directly from any folder.
-- **Build from Source (Instant):** Run `powershell -ExecutionPolicy Bypass -File .\build_native.ps1` to recompile the native C# executable in ~2 seconds.
+### 6. ⌨️ Global Hotkeys & System Tray
+- Press <kbd>F9</kbd> or <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> anywhere in Windows to summon the widget in front of other apps, and press again to send it back to the wallpaper.
+- System Tray icon for quick actions: Lock position, mini mode, pin to corners, reset position, or exit.
 
 ---
 
-### Method 2: Download Electron Installers (.exe)
+## 🚀 Installation Guide
 
-Choose either prebuilt installer from [GitHub Releases](https://github.com/P-Sushanth/to-do_widget/releases) or the `dist/` folder:
+Choose the installation method that best fits your workflow:
 
-1. **Setup Installer** (`Desktop To-Do Widget Setup 1.0.0.exe`):
-   - Double-click to install like any standard Windows application.
-   - Automatically creates **Desktop** and **Start Menu** shortcuts.
-   - Includes full Windows Add/Remove Programs uninstallation support.
-
-2. **Portable Executable** (`Desktop-To-Do-Widget-Portable.exe`):
-   - Single standalone `.exe`.
-   - No installation needed — just double-click anywhere and it runs instantly.
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ Recommended: Native Windows WebView2 Edition                                │
+│  ✔ ~2.2 MB total disk size (99.3% smaller than standard 300MB apps)         │
+│  ✔ ~35–45 MB RAM usage (vs ~180MB)                                          │
+│  ✔ Zero dependencies: Uses Windows built-in Microsoft Edge WebView2 engine  │
+│  ✔ No Node.js or npm required!                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-### Method 3: Electron Developer Setup (Node.js)
+### Option 1: 1-Click Installer (Native Windows Edition) — Recommended ⭐
+
+1. Clone or download this repository:
+   ```powershell
+   git clone https://github.com/P-Sushanth/to-do_widget.git
+   ```
+2. Open the folder in File Explorer.
+3. Double-click **`install-native.bat`** (or right-click `install-native.ps1` and select *Run with PowerShell*).
+4. The installer will:
+   - Install the widget to `%LOCALAPPDATA%\Programs\DesktopToDoWidget\`
+   - Create a **Desktop shortcut** (`To-Do Widget`)
+   - Create a **Start Menu shortcut** (`To-Do Widget`)
+   - Register the widget in **Windows Startup** so it opens when you log in
+   - Launch the widget immediately on your desktop homescreen!
+
+---
+
+### Option 2: Portable No-Install Zip (Native Windows Edition)
+
+If you don't want to install anything and just want a folder you can run from a USB drive or your Documents folder:
+
+1. Download or locate **`Desktop-To-Do-Widget-Native.zip`** (**1.56 MB**).
+2. Extract the zip file anywhere on your computer.
+3. Double-click **`DesktopToDoWidget.exe`** to run!
+4. *(Optional)* Right-click `DesktopToDoWidget.exe` and select **Pin to Start** or **Show more options > Send to > Desktop (create shortcut)**.
+
+---
+
+### Option 3: Compile the Native Executable from Source
+
+You can recompile the C# native binary directly on your machine in ~2 seconds using the Windows built-in compiler:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build_native.ps1
+```
+
+The compiled application will be generated in `dist-native\DesktopToDoWidget.exe`.
+
+---
+
+### Option 4: Electron Edition (For Developers using Node.js)
+
+If you prefer running via the standard Electron toolchain:
 
 #### Prerequisites
-- **Windows 10 or Windows 11** (64-bit)
-- **Node.js** (v18.0.0 or later) & **npm** — [Download Node.js](https://nodejs.org/)
+- **Windows 10 or 11** (64-bit)
+- **Node.js** (v18 or newer) — [Download Node.js](https://nodejs.org/)
 
-#### Step-by-Step Developer Setup
-1. **Clone the Repository**:
+#### Steps
+1. Clone the repository and install npm packages:
    ```powershell
    git clone https://github.com/P-Sushanth/to-do_widget.git
    cd to-do_widget
-   ```
-2. **Install Dependencies**:
-   ```powershell
    npm install
    ```
-3. **Run Locally**:
+2. Start the widget in dev mode:
    ```powershell
    npm start
    ```
-4. **Build Your Own `.exe` Installers**:
+3. To build standalone Electron `.exe` installers:
    ```powershell
    npm run build
    ```
-   The compiled `.exe` files will be generated in the `dist/` directory.
-
-5. **1-Click Script Installation (Optional Dev Shortcuts)**:
-   - Double-click `install.bat` or run:
-     ```powershell
-     powershell -ExecutionPolicy Bypass -File .\install.ps1
-     ```
+   Outputs will be created in `dist/`:
+   - `dist/Desktop To-Do Widget Setup 1.0.0.exe` (NSIS Installer)
+   - `dist/Desktop-To-Do-Widget-Portable.exe` (Portable Binary)
 
 ---
 
-## 🖥️ Running the Widget
+## 🖥️ How to Use the Widget
 
-Once installed, you can launch the widget using any of these methods:
+### Moving & Resizing
+- **Move**: Click and drag from the header bar (where the title "Tasks" is located) to move the widget. Drag near any screen edge or corner to snap flush.
+- **Resize**: Hover your cursor over any border (left, right, top, bottom) or corner. The cursor will change to a resize arrow (`↔`, `↕`, `⤡`). Click and drag to adjust width and height.
+- **Lock**: Click the **🔓** lock icon in the header. When locked (**🔒**), dragging and resizing are disabled to prevent accidental movement.
 
-1. **Desktop Shortcut**: Double-click the **To-Do Widget** shortcut on your Desktop.
-2. **Silent Background Launch**: Double-click `launch-widget.vbs` or `start-widget.bat` (runs without leaving an open terminal window).
-3. **Developer / Terminal Mode**:
-   ```powershell
-   npm start
-   ```
+### Managing Tasks
+- **Add Task**: Type your task title in the bottom field and press <kbd>Enter</kbd>.
+- **Categories**: Click `Personal` or `Work` in the quick-add footer to tag a category before adding. Filter tasks using the `All`, `Personal`, and `Work` tabs at the top.
+- **Schedule Due Dates**: Click the **📅 Date** button in the footer to choose **Today**, **Tomorrow**, a specific date, or check **Show daily** for recurring routines.
+- **Edit Task**: Click any task card to edit its title, date, category, or recurrence.
+- **Complete Task**: Click the checkbox next to any task. Completed tasks move to the bottom collapsible group.
+- **Delete Task**: Hover over a task card and click the **🗑** trash button. An undo banner will appear for 5 seconds.
+
+### Changing Theme Colors
+1. Click the **⚙** gear icon in the header to open the Settings drawer.
+2. Under **Widget Color & Theme**:
+   - Click any of the **10 preset color chips** for instant dark/vibrant themes.
+   - Or drag the cursor in the **2D Color Box** and use the **Hue** / **Shade** sliders to mix any color.
+   - Or click the **Eyedropper** button to pick any color on your screen.
+   - Click **Default** anytime to revert back to Pure Pitch Black (`#000000`).
 
 ---
 
@@ -117,33 +169,42 @@ Once installed, you can launch the widget using any of these methods:
 
 | Shortcut | Action |
 | :--- | :--- |
-| <kbd>F9</kbd> or <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> | Global summon / elevate widget over active windows |
-| <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>T</kbd> | Alternative global summon hotkey |
+| <kbd>F9</kbd> | Global summon / elevate widget over active windows (press again to return to wallpaper) |
+| <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> | Alternative global summon hotkey |
 | <kbd>Ctrl</kbd> + <kbd>N</kbd> | Focus task input field |
-| <kbd>Ctrl</kbd> + <kbd>F</kbd> | Toggle task search bar |
+| <kbd>Ctrl</kbd> + <kbd>F</kbd> | Open / close search bar |
 | <kbd>Enter</kbd> | Submit new task or save edited task |
-| <kbd>Escape</kbd> | Close popovers, search, or settings drawer |
+| <kbd>Escape</kbd> | Dismiss popovers, date picker, search bar, or Settings drawer |
 
 ---
 
-## 💾 Data Storage
+## 💾 Local Data Storage
 
-All your tasks and settings are persisted locally on your computer in an encrypted/safe JSON format at:
+All your tasks, categories, window coordinates, and theme preferences are saved locally on your computer at:
 ```text
 %APPDATA%\windows11-todo-widget\todo-widget-data.json
 ```
-Your data never leaves your device and does not require an internet connection.
+- Completely private and offline: **No data ever leaves your computer**.
+- Zero cloud account required.
 
 ---
 
-## 🧹 Uninstallation
+## 🧹 Uninstallation Guide
 
-To remove the widget shortcuts and startup entry:
-1. Double-click `uninstall.bat` (or manually delete the shortcut from `shell:startup`).
-2. Delete the project folder if you no longer need it.
+### Uninstalling the Native Edition (~2 MB)
+1. Double-click **`uninstall-native.bat`** in the project folder (or right-click `uninstall-native.ps1` > *Run with PowerShell*).
+2. The script will:
+   - Close the running widget
+   - Remove Desktop and Start Menu shortcuts
+   - Remove the Windows Startup registry entry
+   - Delete `%LOCALAPPDATA%\Programs\DesktopToDoWidget\`
+
+### Uninstalling the Electron Edition
+- If installed via `Setup 1.0.0.exe`: Open **Windows Settings > Apps > Installed apps**, search for **Desktop To-Do Widget**, and click **Uninstall**.
+- Or double-click `uninstall.bat` in the repository root.
 
 ---
 
-## 📖 Technical Architecture & Developer Notes
+## 📄 Technical Architecture
 
-For deep-dive architectural specifications, IPC contracts, memory caching, and Windows 11 DWM handling, refer to [`ARCHITECTURE_AND_SPECS.md`](ARCHITECTURE_AND_SPECS.md).
+For complete architectural details, IPC message contracts, magnetic snapping algorithms, ClearType subpixel rendering flags, and Windows DWM window management, see [`ARCHITECTURE_AND_SPECS.md`](ARCHITECTURE_AND_SPECS.md).
