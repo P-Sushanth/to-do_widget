@@ -136,6 +136,34 @@ namespace DesktopToDoWidget
         [DllImport("dwmapi.dll")]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
+        [DllImport("psapi.dll")]
+        private static extern int EmptyWorkingSet(IntPtr hwProc);
+
+        private void TrimMemory()
+        {
+            try
+            {
+                GC.Collect(2, GCCollectionMode.Forced, true);
+                GC.WaitForPendingFinalizers();
+                EmptyWorkingSet(System.Diagnostics.Process.GetCurrentProcess().Handle);
+
+                if (webView != null && webView.CoreWebView2 != null)
+                {
+                    try
+                    {
+                        uint bPid = webView.CoreWebView2.BrowserProcessId;
+                        if (bPid > 0)
+                        {
+                            var bProc = System.Diagnostics.Process.GetProcessById((int)bPid);
+                            EmptyWorkingSet(bProc.Handle);
+                        }
+                    }
+                    catch { }
+                }
+            }
+            catch { }
+        }
+
         // Fields
         private WebView2 webView;
         private NotifyIcon trayIcon;
@@ -145,10 +173,11 @@ namespace DesktopToDoWidget
         private string appDirectory;
         private bool isMiniMode = false;
         private bool isPositionLocked = false;
-        private int fullHeight = 560;
-        private int fullWidth = 350;
-        private int miniHeight = 380;
+        private const int FULL_HEIGHT = 560;
+        private const int FULL_WIDTH = 350;
+        private const int MINI_HEIGHT = 380;
         private const int SNAP_THRESHOLD = 45;
+        private System.Windows.Forms.Timer memTrimTimer;
 
         protected override CreateParams CreateParams
         {
@@ -168,8 +197,8 @@ namespace DesktopToDoWidget
             this.StartPosition = FormStartPosition.Manual;
             this.ShowInTaskbar = false;
             this.BackColor = Color.Black;
-            this.Width = fullWidth;
-            this.Height = fullHeight;
+            this.Width = FULL_WIDTH;
+            this.Height = FULL_HEIGHT;
             this.MinimumSize = new Size(280, 220);
             this.MaximumSize = new Size(900, 1400);
 
@@ -185,6 +214,11 @@ namespace DesktopToDoWidget
 
             RestoreWindowBounds();
             InitTray();
+
+            memTrimTimer = new System.Windows.Forms.Timer();
+            memTrimTimer.Interval = 45000;
+            memTrimTimer.Tick += (s, e) => TrimMemory();
+            memTrimTimer.Start();
 
             this.FormClosing += (s, e) => {
                 Log("FormClosing triggered: CloseReason = " + e.CloseReason + ", Cancel = " + e.Cancel);
@@ -235,6 +269,13 @@ namespace DesktopToDoWidget
             UnregisterHotKey(this.Handle, HOTKEY_ID_ALT_SHIFT_T);
             UnregisterHotKey(this.Handle, HOTKEY_ID_CTRL_ALT_T);
 
+            if (memTrimTimer != null)
+            {
+                memTrimTimer.Stop();
+                memTrimTimer.Dispose();
+                memTrimTimer = null;
+            }
+
             if (trayIcon != null)
             {
                 trayIcon.Visible = false;
@@ -275,6 +316,7 @@ namespace DesktopToDoWidget
         private void SendToWallpaperLayer()
         {
             SetWindowPos(this.Handle, HWND_BOTTOM, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+            TrimMemory();
         }
 
         private void ToggleWidgetFocus()
@@ -359,7 +401,7 @@ namespace DesktopToDoWidget
 
             Rectangle primary = Screen.PrimaryScreen.WorkingArea;
             this.Location = new Point(primary.Right - 380, primary.Top + 40);
-            this.Size = new Size(fullWidth, fullHeight);
+            this.Size = new Size(FULL_WIDTH, FULL_HEIGHT);
         }
 
         private void SaveCurrentBounds()
@@ -514,7 +556,7 @@ namespace DesktopToDoWidget
         private void ResetPosition()
         {
             Rectangle wa = Screen.FromControl(this).WorkingArea;
-            this.Size = new Size(fullWidth, fullHeight);
+            this.Size = new Size(FULL_WIDTH, FULL_HEIGHT);
             this.Location = new Point(wa.Right - 380, wa.Top + 40);
             isMiniMode = false;
             SaveCurrentBounds();
@@ -525,11 +567,11 @@ namespace DesktopToDoWidget
             isMiniMode = mini;
             if (mini)
             {
-                this.Size = new Size(this.Width, miniHeight);
+                this.Size = new Size(this.Width, MINI_HEIGHT);
             }
             else
             {
-                this.Size = new Size(this.Width, fullHeight);
+                this.Size = new Size(this.Width, FULL_HEIGHT);
             }
             SaveCurrentBounds();
         }
@@ -582,10 +624,34 @@ namespace DesktopToDoWidget
                 this.Controls.Add(webView);
 
                 string wvUserData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "windows11-todo-widget", "webview2_data");
-                var env = await CoreWebView2Environment.CreateAsync(null, wvUserData);
+
+                var envOptions = new CoreWebView2EnvironmentOptions();
+                envOptions.AdditionalBrowserArguments =
+                    "--disable-features=AudioServiceOutOfProcess,CalculateNativeWinOcclusion,SpareRendererForSitePerProcess,MediaSessionService,PreloadMediaEngagementData,AutofillServerCommunication,BackForwardCache " +
+                    "--renderer-process-limit=1 " +
+                    "--disable-background-networking " +
+                    "--disable-sync " +
+                    "--disable-extensions " +
+                    "--disable-default-apps " +
+                    "--disable-breakpad " +
+                    "--disable-crash-reporter " +
+                    "--disable-gpu-shader-disk-cache " +
+                    "--js-flags=\"--max-old-space-size=16 --lite-mode --optimize-for-size --expose-gc\"";
+
+                var env = await CoreWebView2Environment.CreateAsync(null, wvUserData, envOptions);
                 Log("CoreWebView2Environment created");
                 await webView.EnsureCoreWebView2Async(env);
                 Log("EnsureCoreWebView2Async finished");
+
+                try
+                {
+                    webView.CoreWebView2.MemoryUsageTargetLevel = CoreWebView2MemoryUsageTargetLevel.Low;
+                }
+                catch { }
+
+                webView.NavigationCompleted += (s, e) => {
+                    TrimMemory();
+                };
 
                 webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
                 webView.CoreWebView2.Settings.AreDevToolsEnabled = false;

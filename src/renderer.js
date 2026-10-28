@@ -861,24 +861,35 @@ function renderTasks() {
         return 0;
     });
 
-    const activeTasks = filtered.filter(t => !t.completed);
-    const completedTasks = filtered.filter(t => t.completed);
+    const activeFrag = document.createDocumentFragment();
+    const completedFrag = document.createDocumentFragment();
+    let activeCount = 0;
+    let completedCount = 0;
 
-    activeTasks.forEach(task => {
-        activeTasksList.appendChild(createTaskCard(task));
-    });
+    for (let i = 0; i < filtered.length; i++) {
+        const task = filtered[i];
+        if (task.completed) {
+            completedCount++;
+            if (state.filter.status !== 'pending') {
+                completedFrag.appendChild(createTaskCard(task));
+            }
+        } else {
+            activeCount++;
+            activeFrag.appendChild(createTaskCard(task));
+        }
+    }
 
-    if (completedTasks.length > 0 && state.filter.status !== 'pending') {
+    activeTasksList.appendChild(activeFrag);
+
+    if (completedCount > 0 && state.filter.status !== 'pending') {
         completedGroupWrap.classList.remove('hidden');
-        completedCountLabel.textContent = completedTasks.length;
-        completedTasks.forEach(task => {
-            completedTasksList.appendChild(createTaskCard(task));
-        });
+        completedCountLabel.textContent = completedCount;
+        completedTasksList.appendChild(completedFrag);
     } else {
         completedGroupWrap.classList.add('hidden');
     }
 
-    const hasVisible = activeTasks.length > 0 || (completedTasks.length > 0 && state.filter.status !== 'pending');
+    const hasVisible = activeCount > 0 || (completedCount > 0 && state.filter.status !== 'pending');
     emptyState.classList.toggle('hidden', hasVisible);
 
     updateCollapsedCount();
@@ -1069,6 +1080,10 @@ function showToast(msg, canUndo = false) {
     if (state.toastTimer) clearTimeout(state.toastTimer);
     state.toastTimer = setTimeout(() => {
         toastBar.classList.add('hidden');
+        state.lastDeletedTask = null;
+        if (typeof window.gc === 'function') {
+            try { window.gc(); } catch (e) {}
+        }
     }, 4000);
 }
 
@@ -1232,6 +1247,9 @@ btnSettings.addEventListener('click', () => {
 
 btnCloseSettings.addEventListener('click', () => {
     settingsDrawer.classList.add('hidden');
+    if (typeof window.gc === 'function') {
+        try { window.gc(); } catch (e) {}
+    }
 });
 
 // Status filter buttons
