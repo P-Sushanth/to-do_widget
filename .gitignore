@@ -2,6 +2,7 @@
 node_modules/
 dist/
 dist-native/
+dist-pure-native/
 build_native/
 release/
 *.zip
