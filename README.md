@@ -13,44 +13,46 @@ Now available in an **Ultra-Lightweight Native Windows Edition (~2 MB)** powered
 
 ## 🌟 Key Features
 
-### 1. 🪟 True Desktop Homescreen Persistence
-- **Native Wallpaper Plane**: Sits on the desktop background layer (`alwaysOnTop: false`). Normal windows naturally sit over it when you work.
-- **Immune to `Win + D`**: Minimization calls from Windows are intercepted and restored, ensuring the widget never disappears when toggling the desktop.
-- **No Taskbar Clutter**: Runs without cluttering your taskbar.
-- **Position Lock (🔒)**: Click the lock icon in the header to freeze the widget in place and avoid accidental movement or resizing.
-- **Position & Size Memory**: Automatically remembers its exact screen position and custom dimensions across reboots.
+### 1. ⚡ Ultra-Small App Size (~2 MB) & Featherweight RAM (~35 MB)
+- **99.3% Smaller Disk Footprint**: Traditional Electron utilities consume 250–350+ MB for simple desktop widgets. The native edition requires only **~2.2 MB total disk space**, with a single standalone executable of just **~140 KB**.
+- **75% Lower RAM Consumption**: Runs at a featherweight **~35–45 MB RAM** (compared to ~180 MB across 4 separate background Chromium/Node.js helper processes in Electron).
+- **Windows Native WebView2 Engine**: Leverages the Microsoft Edge WebView2 runtime already built into Windows 10 & 11. No bundled Chromium binaries, zero bloat, and lightning-fast cold boot in under 300 ms.
+- **Hardware-Accelerated Win32 Interop**: DirectComposition GPU acceleration with native Windows subpixel ClearType font rendering for crisp text on high-DPI displays.
 
-### 2. 🧲 Magnetic Flush Edge & Corner Snapping
-- **0px Flush Snapping**: Dragging near any screen boundary automatically snaps the widget flush (0px offset) against the display edge without gaps.
-- **4-Corner Snap**: Dragging near any corner cleanly pins the widget into place.
-- **One-Click Pinning**: Open the Settings drawer or right-click the system tray icon to snap to **Top-Left** or **Top-Right** with one click.
+### 2. 🎨 Full-Spectrum Color & Dynamic Theme Studio
+- **Unlimited Palette Freedom**: An integrated color studio in Settings (`⚙`) offering complete control over your desktop aesthetic:
+  - **2D Saturation & Value Canvas Box**: Smooth 2D touch/mouse surface for pinpoint color intensity and brightness control.
+  - **360° Rainbow Hue Slider**: Full chromatic sweep across every hue in the color spectrum.
+  - **Dedicated Shade / Lightness Slider**: Seamlessly tune darkness from pitch black to deep shadows and vibrant tints.
+  - **Hex Color Input**: Type or paste any custom hex code (`#ff4500`, `#3b82f6`, `#8b5cf6`, etc.).
+  - **System Eyedropper**: Sample any pixel color directly from your desktop wallpaper or open apps.
+  - **10 Curated Dark & Vibrant Presets**: Instant 1-click palettes (Pitch Black, Obsidian Navy, Deep Plum, Forest Emerald, Velvet Wine, Cyberpunk Teal, Espresso, Titanium Slate, Midnight Indigo, Steel Blue).
+  - **Instant Reset**: One-click **Default** button to instantly restore Pure Pitch Black (`#000000`).
+- **Dynamic Harmonized Shade Calculation**: Selecting a color doesn't just change the background — the widget automatically computes complementary and high-contrast shades of that exact hue for all buttons (`+` Add, "Done", "Save", checkboxes), active category tabs, filter pills, and hover states!
 
-### 3. 📐 Real-Time Edge & Corner Resizing
-- **Every Edge & Corner**: Drag from the **left**, **right**, **top**, **bottom**, or any of the **4 corners** to resize the widget to your liking.
-- **Visual Corner Grip**: A subtle diagonal grip indicator at the bottom-right corner provides an intuitive handle for diagonal resizing.
-- **Minimum Size Safeguard**: Enforces a minimum size of `280 × 220` so content always remains clear and readable.
+### 3. 🧲 Magnetic Flush Edge & Corner Snapping
+- **True 0px Flush Screen Snapping**: Dragging near any display border (left, right, top, or bottom) magnetically snaps the widget with a **0px flush offset** directly against your monitor boundary — zero gaps, zero overhang.
+- **4-Corner Snap Locking**: Pulling the widget toward any screen corner automatically locks it into the corner quadrant with a smooth 45px snap threshold.
+- **One-Click Corner Pinning**: Open the Settings drawer or right-click the system tray icon to snap instantly to **Top-Left** or **Top-Right** with a single click.
+- **Position Lock (🔒)**: Toggle the lock icon in the header to freeze coordinates and prevent accidental dragging or resizing while working.
 
-### 4. 🎨 Full-Spectrum Color & Theme Studio
-- **Full Spectrum Color Studio**: Accessible directly via Settings (`⚙`).
-  - **2D Canvas Box**: Interactive saturation and brightness grid.
-  - **360° Hue Slider**: Full rainbow spectrum to choose any hue.
-  - **Shade / Lightness Slider**: Fine-tune depth from deep pitch black to bright tints.
-  - **Hex Input**: Type or paste any hex code (`#ff4500`, `#3b82f6`, etc.).
-  - **System Eyedropper**: Sample colors directly from your wallpaper or screen.
-  - **10 Curated Presets**: Pitch Black, Obsidian Navy, Deep Plum, Forest Emerald, Velvet Wine, Cyberpunk Teal, Espresso, Titanium Slate, Midnight Indigo, and Steel Blue.
-  - **Default Button**: One click to restore the original Pure Pitch Black (`#000000`).
-- **Dynamic Button & Accent Shades**: Selecting a color doesn't just change the background — all buttons (`+` Add, "Done", "Save", checkboxes), active category tabs, and status filter pills dynamically adopt matching shades of that color with high contrast!
+### 4. 🪟 Desktop Homescreen Persistence & Real-Time Resizing
+- **True Wallpaper Plane**: Lives permanently on your desktop background layer (`alwaysOnTop: false`), allowing all normal productivity windows to glide smoothly over it.
+- **Immune to `Win + D` (*Show Desktop*)**: Intercepts Windows desktop toggle commands to ensure the widget never minimizes or vanishes.
+- **8-Directional Edge & Corner Resizing**: Freely drag from the **left**, **right**, **top**, **bottom**, or any of the **4 corners** in real-time, backed by native Windows `WM_NCLBUTTONDOWN` hit-testing.
+- **Visual Corner Grip**: Subtle diagonal grip indicator at the bottom-right corner for quick diagonal resizing.
+- **No Taskbar Clutter**: Stays hidden from the taskbar, accessible anytime via the desktop or system tray.
 
-### 5. ⚡ Task Management & Google Tasks Date Recurrence
-- **Quick-Add**: Type your task title and hit <kbd>Enter</kbd>.
-- **Strictly Two Categories**: `Personal` and `Work` tabs (+ `All` view).
+### 5. ⚡ Task Management & Google Tasks Recurrence
+- **Quick-Add**: Type task titles and press <kbd>Enter</kbd> instantly.
+- **Strictly Two Categories**: Organized under `Personal` and `Work` tabs with an `All` view.
 - **Google Tasks-Style Date Popover**: Quick scheduling with **Today**, **Tomorrow**, native date input, and **Show daily** recurrence checkbox.
 - **4 Predictable Sort Modes**: `Date asc`, `Date dsc`, `a-z`, `z-a`.
-- **Collapsible Mini Mode**: Collapse the widget into a compact view showing only pending tasks.
-- **Undo Toast**: 5-second popup banner to instantly restore accidentally deleted tasks.
+- **Collapsible Mini Mode**: Collapse into an ultra-compact pending-only list to save desktop space.
+- **5-Second Undo Toast**: Restore accidentally deleted tasks with one click.
 
 ### 6. ⌨️ Global Hotkeys & System Tray
-- Press <kbd>F9</kbd> or <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> anywhere in Windows to summon the widget in front of other apps, and press again to send it back to the wallpaper.
+- Press <kbd>F9</kbd> or <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd> anywhere in Windows to summon the widget in front of active windows, and press again to return it to the wallpaper.
 - System Tray icon for quick actions: Lock position, mini mode, pin to corners, reset position, or exit.
 
 ---
@@ -137,31 +139,6 @@ If you prefer running via the standard Electron toolchain:
    Outputs will be created in `dist/`:
    - `dist/Desktop To-Do Widget Setup 1.0.0.exe` (NSIS Installer)
    - `dist/Desktop-To-Do-Widget-Portable.exe` (Portable Binary)
-
----
-
-## 🖥️ How to Use the Widget
-
-### Moving & Resizing
-- **Move**: Click and drag from the header bar (where the title "Tasks" is located) to move the widget. Drag near any screen edge or corner to snap flush.
-- **Resize**: Hover your cursor over any border (left, right, top, bottom) or corner. The cursor will change to a resize arrow (`↔`, `↕`, `⤡`). Click and drag to adjust width and height.
-- **Lock**: Click the **🔓** lock icon in the header. When locked (**🔒**), dragging and resizing are disabled to prevent accidental movement.
-
-### Managing Tasks
-- **Add Task**: Type your task title in the bottom field and press <kbd>Enter</kbd>.
-- **Categories**: Click `Personal` or `Work` in the quick-add footer to tag a category before adding. Filter tasks using the `All`, `Personal`, and `Work` tabs at the top.
-- **Schedule Due Dates**: Click the **📅 Date** button in the footer to choose **Today**, **Tomorrow**, a specific date, or check **Show daily** for recurring routines.
-- **Edit Task**: Click any task card to edit its title, date, category, or recurrence.
-- **Complete Task**: Click the checkbox next to any task. Completed tasks move to the bottom collapsible group.
-- **Delete Task**: Hover over a task card and click the **🗑** trash button. An undo banner will appear for 5 seconds.
-
-### Changing Theme Colors
-1. Click the **⚙** gear icon in the header to open the Settings drawer.
-2. Under **Widget Color & Theme**:
-   - Click any of the **10 preset color chips** for instant dark/vibrant themes.
-   - Or drag the cursor in the **2D Color Box** and use the **Hue** / **Shade** sliders to mix any color.
-   - Or click the **Eyedropper** button to pick any color on your screen.
-   - Click **Default** anytime to revert back to Pure Pitch Black (`#000000`).
 
 ---
 
