@@ -38,11 +38,22 @@ A lightweight, zero-latency desktop To-Do widget built specifically for Windows 
 
 ---
 
-## 🚀 Installation Guide
+## 🚀 Installation & Running
 
-### Method 1: Download Prebuilt Executable (.exe) — Recommended
+### Method 1: Ultra-Lightweight Native Windows Edition (~2 MB) — Recommended ⭐
 
-No Node.js or terminal required! Choose either option from the [GitHub Releases](https://github.com/P-Sushanth/to-do_widget/releases) or the `dist/` folder:
+No Electron, no Node.js required! Uses the Windows built-in Microsoft Edge engine:
+- **Total Disk Footprint:** **~2.2 MB** *(99.3% smaller than standard 300MB apps)*
+- **Memory (RAM) Usage:** **~30–45 MB** *(vs ~180MB)*
+- **1-Click Install:** Double-click `install-native.bat` to install shortcuts to your Desktop, Start Menu, and Windows Startup.
+- **Portable Zip:** Extract `Desktop-To-Do-Widget-Native.zip` and run `DesktopToDoWidget.exe` directly from any folder.
+- **Build from Source (Instant):** Run `powershell -ExecutionPolicy Bypass -File .\build_native.ps1` to recompile the native C# executable in ~2 seconds.
+
+---
+
+### Method 2: Download Electron Installers (.exe)
+
+Choose either prebuilt installer from [GitHub Releases](https://github.com/P-Sushanth/to-do_widget/releases) or the `dist/` folder:
 
 1. **Setup Installer** (`Desktop To-Do Widget Setup 1.0.0.exe`):
    - Double-click to install like any standard Windows application.
@@ -55,7 +66,7 @@ No Node.js or terminal required! Choose either option from the [GitHub Releases]
 
 ---
 
-### Method 2: Run from Source / Developer Setup
+### Method 3: Electron Developer Setup (Node.js)
 
 #### Prerequisites
 - **Windows 10 or Windows 11** (64-bit)

@@ -1,7 +1,10 @@
 # Node dependencies
 node_modules/
 dist/
+dist-native/
+build_native/
 release/
+*.zip
 
 # Runtime and log files
 widget_runtime.log
