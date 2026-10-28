@@ -167,6 +167,75 @@
             <div class="settings-content">
 
 
+                <!-- Widget Color & Theme Section -->
+                <div class="setting-item color-theme-section">
+                    <div class="setting-label-group">
+                        <span class="setting-title">Widget Color & Theme</span>
+                        <span class="setting-desc">Set background & dynamic button shades</span>
+                    </div>
+
+                    <!-- Curated Presets -->
+                    <div class="color-presets-row" id="color-presets-row">
+                        <button type="button" class="preset-chip active" data-color="#000000" style="background: #000000;" title="Pitch Black (Default)"></button>
+                        <button type="button" class="preset-chip" data-color="#0a192f" style="background: #0a192f;" title="Obsidian Navy"></button>
+                        <button type="button" class="preset-chip" data-color="#180829" style="background: #180829;" title="Deep Plum"></button>
+                        <button type="button" class="preset-chip" data-color="#052016" style="background: #052016;" title="Forest Emerald"></button>
+                        <button type="button" class="preset-chip" data-color="#26080e" style="background: #26080e;" title="Velvet Wine"></button>
+                        <button type="button" class="preset-chip" data-color="#041c24" style="background: #041c24;" title="Cyberpunk Teal"></button>
+                        <button type="button" class="preset-chip" data-color="#231709" style="background: #231709;" title="Espresso Mocha"></button>
+                        <button type="button" class="preset-chip" data-color="#18181b" style="background: #18181b;" title="Titanium Slate"></button>
+                        <button type="button" class="preset-chip" data-color="#1e1b4b" style="background: #1e1b4b;" title="Midnight Indigo"></button>
+                        <button type="button" class="preset-chip" data-color="#14213d" style="background: #14213d;" title="Steel Blue"></button>
+                    </div>
+
+                    <!-- Full Color Studio -->
+                    <div class="color-studio-container">
+                        <!-- 2D Saturation-Lightness Canvas Box -->
+                        <div class="color-sv-box" id="color-sv-box">
+                            <div class="color-sv-layer color-sv-white"></div>
+                            <div class="color-sv-layer color-sv-black"></div>
+                            <div class="color-sv-cursor" id="color-sv-cursor"></div>
+                        </div>
+
+                        <!-- Sliders -->
+                        <div class="color-sliders-container">
+                            <!-- Full 360 Spectrum Hue Bar -->
+                            <div class="color-slider-row">
+                                <label class="color-slider-label">Hue</label>
+                                <div class="color-slider-track-wrap">
+                                    <input type="range" id="color-hue-slider" class="spectrum-range hue-range" min="0" max="360" value="0">
+                                </div>
+                                <span class="color-slider-val" id="hue-val-label">0°</span>
+                            </div>
+
+                            <!-- Shade / Lightness Slider -->
+                            <div class="color-slider-row">
+                                <label class="color-slider-label">Shade</label>
+                                <div class="color-slider-track-wrap">
+                                    <input type="range" id="color-lightness-slider" class="spectrum-range lightness-range" min="0" max="100" value="0">
+                                </div>
+                                <span class="color-slider-val" id="lightness-val-label">0%</span>
+                            </div>
+                        </div>
+
+                        <!-- Value Bar & Live Swatch + Eyedropper + Reset -->
+                        <div class="color-values-row">
+                            <div class="color-swatch-badge" id="color-active-swatch" title="Active Theme Color"></div>
+                            <div class="hex-input-pill">
+                                <span class="hex-hash">#</span>
+                                <input type="text" id="color-hex-input" class="hex-text-input" value="000000" maxlength="6" spellcheck="false" title="Hex color code">
+                            </div>
+                            <input type="color" id="native-color-picker" class="hidden-native-picker" value="#000000">
+                            <button type="button" id="btn-eyedropper" class="picker-tool-btn" title="Eyedropper / System Color Picker">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                            </button>
+                            <button type="button" id="btn-reset-color" class="picker-tool-btn reset-btn" title="Reset to Pure Black">
+                                Default
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Startup with Windows -->
                 <div class="setting-item toggle-row">
                     <div class="setting-label-group">

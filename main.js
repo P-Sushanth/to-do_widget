@@ -57,7 +57,8 @@ const defaultData = {
         opacity: 0.94,
         miniMode: false,
         autoStart: true,
-        bounds: null
+        bounds: null,
+        themeColor: '#000000'
     }
 };
 

@@ -9,7 +9,8 @@ let state = {
         locked: false,
         opacity: 0.94,
         miniMode: false,
-        autoStart: true
+        autoStart: true,
+        themeColor: '#000000'
     },
     filter: {
         category: 'All', // 'All', 'Personal', 'Work'
@@ -85,6 +86,20 @@ const btnResetPos = document.getElementById('btn-reset-pos');
 const btnPinTopLeft = document.getElementById('btn-pin-top-left');
 const btnPinTopRight = document.getElementById('btn-pin-top-right');
 
+// Color Studio Elements
+const colorPresetsRow = document.getElementById('color-presets-row');
+const colorSvBox = document.getElementById('color-sv-box');
+const colorSvCursor = document.getElementById('color-sv-cursor');
+const colorHueSlider = document.getElementById('color-hue-slider');
+const hueValLabel = document.getElementById('hue-val-label');
+const colorLightnessSlider = document.getElementById('color-lightness-slider');
+const lightnessValLabel = document.getElementById('lightness-val-label');
+const colorActiveSwatch = document.getElementById('color-active-swatch');
+const colorHexInput = document.getElementById('color-hex-input');
+const nativeColorPicker = document.getElementById('native-color-picker');
+const btnEyedropper = document.getElementById('btn-eyedropper');
+const btnResetColor = document.getElementById('btn-reset-color');
+
 // Edit Modal
 const taskEditModal = document.getElementById('task-edit-modal');
 const btnCloseEdit = document.getElementById('btn-close-edit');
@@ -146,6 +161,14 @@ function loadLocalCache() {
         if (cachedSettings) {
             state.settings = { ...state.settings, ...JSON.parse(cachedSettings) };
         }
+        const cachedColor = localStorage.getItem('todo_widget_theme_color');
+        if (cachedColor) {
+            state.settings.themeColor = cachedColor;
+        } else if (!state.settings.themeColor) {
+            state.settings.themeColor = '#000000';
+        }
+        applyThemeColor(state.settings.themeColor, false, false);
+
         const cachedSort = localStorage.getItem('todo_widget_sort');
         if (cachedSort) {
             state.filter.sortBy = cachedSort;
@@ -162,6 +185,7 @@ async function initWidget() {
     applyLockState();
     applyCollapseMode(state.settings.miniMode, false);
     renderTasks();
+    initColorStudio();
 
     // 2. Non-blocking background sync with main process
     if (window.widgetAPI && window.widgetAPI.loadData) {
@@ -173,6 +197,10 @@ async function initWidget() {
                     isDaily: !!t.isDaily
                 }));
                 state.settings = { ...state.settings, ...(stored.settings || {}) };
+                if (stored.settings && stored.settings.themeColor) {
+                    state.settings.themeColor = stored.settings.themeColor;
+                    applyThemeColor(state.settings.themeColor, true, false);
+                }
                 applyOpacity(state.settings.opacity);
                 applyLockState();
                 renderTasks();
@@ -226,7 +254,7 @@ function persistState() {
 // ==========================================================================
 function applyOpacity(opacity) {
     state.settings.opacity = 1;
-    widgetContainer.style.backgroundColor = '#000000';
+    widgetContainer.style.backgroundColor = '';
 }
 
 function applyLockState() {
@@ -251,6 +279,538 @@ function applyCollapseMode(isCollapsed, callIpc = true) {
 function updateCollapsedCount() {
     const pending = state.tasks.filter(t => !t.completed).length;
     collapsedBadge.textContent = pending;
+}
+
+// ==========================================================================
+// Color Engine & Dynamic Theme Shades
+// ==========================================================================
+
+function hexToRgb(hex) {
+    if (!hex) return { r: 0, g: 0, b: 0 };
+    let c = hex.replace('#', '').trim();
+    if (c.length === 3) {
+        c = c.split('').map(ch => ch + ch).join('');
+    }
+    if (c.length !== 6) return { r: 0, g: 0, b: 0 };
+    const num = parseInt(c, 16);
+    if (isNaN(num)) return { r: 0, g: 0, b: 0 };
+    return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+    };
+}
+
+function rgbToHex(r, g, b) {
+    const toH = (n) => {
+        const cl = Math.max(0, Math.min(255, Math.round(n)));
+        return cl.toString(16).padStart(2, '0');
+    };
+    return `#${toH(r)}${toH(g)}${toH(b)}`.toLowerCase();
+}
+
+function rgbToHsl(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
+
+    if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return {
+        h: Math.round(h * 360),
+        s: Math.round(s * 100),
+        l: Math.round(l * 100)
+    };
+}
+
+function hslToHex(h, s, l) {
+    h = (h % 360 + 360) % 360;
+    s = Math.max(0, Math.min(100, s)) / 100;
+    l = Math.max(0, Math.min(100, l)) / 100;
+
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = l - c / 2;
+
+    let r = 0, g = 0, b = 0;
+    if (h >= 0 && h < 60) {
+        r = c; g = x; b = 0;
+    } else if (h >= 60 && h < 120) {
+        r = x; g = c; b = 0;
+    } else if (h >= 120 && h < 180) {
+        r = 0; g = c; b = x;
+    } else if (h >= 180 && h < 240) {
+        r = 0; g = x; b = c;
+    } else if (h >= 240 && h < 300) {
+        r = x; g = 0; b = c;
+    } else {
+        r = c; g = 0; b = x;
+    }
+
+    return rgbToHex((r + m) * 255, (g + m) * 255, (b + m) * 255);
+}
+
+function rgbToHsv(r, g, b) {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const d = max - min;
+    let h = 0;
+    const s = max === 0 ? 0 : d / max;
+    const v = max;
+
+    if (max !== min) {
+        switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+    }
+
+    return {
+        h: Math.round(h * 360),
+        s: s,
+        v: v
+    };
+}
+
+function hsvToRgb(h, s, v) {
+    h = (h % 360 + 360) % 360;
+    s = Math.max(0, Math.min(1, s));
+    v = Math.max(0, Math.min(1, v));
+
+    const c = v * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = v - c;
+
+    let r = 0, g = 0, b = 0;
+    if (h >= 0 && h < 60) {
+        r = c; g = x; b = 0;
+    } else if (h >= 60 && h < 120) {
+        r = x; g = c; b = 0;
+    } else if (h >= 120 && h < 180) {
+        r = 0; g = c; b = x;
+    } else if (h >= 180 && h < 240) {
+        r = 0; g = x; b = c;
+    } else if (h >= 240 && h < 300) {
+        r = x; g = 0; b = c;
+    } else {
+        r = c; g = 0; b = x;
+    }
+
+    return {
+        r: Math.round((r + m) * 255),
+        g: Math.round((g + m) * 255),
+        b: Math.round((b + m) * 255)
+    };
+}
+
+function computeThemeShades(hex) {
+    const cleanHex = (hex && hex.startsWith('#') ? hex : '#' + (hex || '000000')).toLowerCase();
+    const rgb = hexToRgb(cleanHex);
+    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    const { h, s, l } = hsl;
+
+    // Special case: Default pitch black / pure dark monochrome
+    if (cleanHex === '#000000' || (s <= 5 && l <= 3)) {
+        return {
+            bgWindow: '#000000',
+            bgSurface: '#0a0a0a',
+            bgSurfaceHover: '#141414',
+            bgSurfaceActive: '#1c1c1c',
+            bgPopover: '#0a0a0a',
+            borderWindow: '#1e1e1e',
+            borderSubtle: '#141414',
+            borderHover: '#2d2d2d',
+            textPrimary: '#ffffff',
+            textSecondary: '#a1a1aa',
+            textMuted: '#71717a',
+            textDisabled: '#52525b',
+            accentSolid: '#ffffff',
+            accentHover: '#e4e4e7',
+            accentSubtle: 'rgba(255, 255, 255, 0.08)',
+            accentText: '#ffffff',
+            accentContrast: '#000000',
+            shadowWindow: '0 12px 32px rgba(0, 0, 0, 0.9), 0 0 0 1px #1e1e1e'
+        };
+    }
+
+    // Dark & Medium Backgrounds (L <= 55)
+    if (l <= 55) {
+        const surfSat = Math.min(100, Math.round(s * 0.9 + 4));
+        const surfL = Math.min(32, Math.round(l + 6));
+        const surfHoverL = Math.min(40, Math.round(l + 12));
+        const surfActiveL = Math.min(48, Math.round(l + 18));
+        const popoverL = Math.min(34, Math.round(l + 7));
+
+        const borderSat = Math.min(100, Math.round(s * 0.8 + 6));
+        const borderWinL = Math.min(45, Math.round(l + 14));
+        const borderSubtleL = Math.min(35, Math.round(l + 8));
+        const borderHoverL = Math.min(55, Math.round(l + 24));
+
+        let accentSolid, accentHover, accentSubtle, accentText, accentContrast;
+        if (s > 6) {
+            // Punchy, vibrant shade of the selected color hue for buttons & icons!
+            const accentSat = Math.max(76, Math.min(100, s));
+            const accentL = Math.max(52, Math.min(68, l + 35));
+            accentSolid = hslToHex(h, accentSat, accentL);
+            accentHover = hslToHex(h, accentSat, Math.min(78, accentL + 8));
+            accentSubtle = `hsla(${h}, ${Math.max(70, s)}%, 55%, 0.18)`;
+            accentText = hslToHex(h, Math.max(75, s), 78);
+            const accRgb = hexToRgb(accentSolid);
+            const accLum = 0.299 * accRgb.r + 0.587 * accRgb.g + 0.114 * accRgb.b;
+            accentContrast = accLum > 140 ? '#000000' : '#ffffff';
+        } else {
+            accentSolid = '#ffffff';
+            accentHover = '#e4e4e7';
+            accentSubtle = 'rgba(255, 255, 255, 0.12)';
+            accentText = '#ffffff';
+            accentContrast = '#000000';
+        }
+
+        const borderWinHex = hslToHex(h, borderSat, borderWinL);
+
+        return {
+            bgWindow: cleanHex,
+            bgSurface: hslToHex(h, surfSat, surfL),
+            bgSurfaceHover: hslToHex(h, surfSat, surfHoverL),
+            bgSurfaceActive: hslToHex(h, surfSat, surfActiveL),
+            bgPopover: hslToHex(h, surfSat, popoverL),
+            borderWindow: borderWinHex,
+            borderSubtle: hslToHex(h, borderSat, borderSubtleL),
+            borderHover: hslToHex(h, borderSat, borderHoverL),
+            textPrimary: '#ffffff',
+            textSecondary: hslToHex(h, Math.min(25, Math.round(s * 0.3)), 74),
+            textMuted: hslToHex(h, Math.min(20, Math.round(s * 0.25)), 54),
+            textDisabled: hslToHex(h, Math.min(15, Math.round(s * 0.2)), 38),
+            accentSolid,
+            accentHover,
+            accentSubtle,
+            accentText,
+            accentContrast,
+            shadowWindow: `0 12px 32px rgba(0, 0, 0, 0.85), 0 0 0 1px ${borderWinHex}`
+        };
+    }
+
+    // Light Backgrounds (L > 55)
+    const surfSat = Math.max(10, Math.round(s * 0.8));
+    const surfL = Math.max(82, Math.round(l - 6));
+    const surfHoverL = Math.max(74, Math.round(l - 12));
+    const surfActiveL = Math.max(68, Math.round(l - 18));
+    const popoverL = Math.max(86, Math.round(l - 4));
+
+    const borderSat = Math.max(12, Math.round(s * 0.7));
+    const borderWinL = Math.max(50, Math.round(l - 24));
+    const borderSubtleL = Math.max(70, Math.round(l - 14));
+    const borderHoverL = Math.max(40, Math.round(l - 32));
+
+    const accentSat = Math.max(75, s);
+    const accentL = Math.min(42, Math.max(22, Math.round(l - 30)));
+    const accentSolid = hslToHex(h, accentSat, accentL);
+    const accentHover = hslToHex(h, accentSat, Math.max(16, accentL - 8));
+    const accentSubtle = `hsla(${h}, ${Math.max(65, s)}%, 40%, 0.15)`;
+    const accentText = hslToHex(h, Math.max(80, s), 28);
+    const borderWinHex = hslToHex(h, borderSat, borderWinL);
+
+    return {
+        bgWindow: cleanHex,
+        bgSurface: hslToHex(h, surfSat, surfL),
+        bgSurfaceHover: hslToHex(h, surfSat, surfHoverL),
+        bgSurfaceActive: hslToHex(h, surfSat, surfActiveL),
+        bgPopover: hslToHex(h, surfSat, popoverL),
+        borderWindow: borderWinHex,
+        borderSubtle: hslToHex(h, borderSat, borderSubtleL),
+        borderHover: hslToHex(h, borderSat, borderHoverL),
+        textPrimary: '#09090b',
+        textSecondary: hslToHex(h, Math.min(30, Math.round(s * 0.3)), 26),
+        textMuted: hslToHex(h, Math.min(25, Math.round(s * 0.25)), 44),
+        textDisabled: hslToHex(h, Math.min(20, Math.round(s * 0.2)), 62),
+        accentSolid,
+        accentHover,
+        accentSubtle,
+        accentText,
+        accentContrast: '#ffffff',
+        shadowWindow: `0 12px 32px rgba(0, 0, 0, 0.25), 0 0 0 1px ${borderWinHex}`
+    };
+}
+
+let _currentThemeH = 0;
+let _currentThemeS = 0;
+let _currentThemeV = 0;
+
+function applyThemeColor(hex, syncControls = true, persist = true) {
+    if (!hex) hex = '#000000';
+    let cleanHex = hex.trim();
+    if (!cleanHex.startsWith('#')) cleanHex = '#' + cleanHex;
+    if (!/^#[0-9a-fA-F]{6}$/i.test(cleanHex)) {
+        if (/^#[0-9a-fA-F]{3}$/i.test(cleanHex)) {
+            cleanHex = '#' + cleanHex[1] + cleanHex[1] + cleanHex[2] + cleanHex[2] + cleanHex[3] + cleanHex[3];
+        } else {
+            cleanHex = '#000000';
+        }
+    }
+    cleanHex = cleanHex.toLowerCase();
+    state.settings.themeColor = cleanHex;
+
+    const shades = computeThemeShades(cleanHex);
+    const rootStyle = document.documentElement.style;
+
+    rootStyle.setProperty('--bg-window', shades.bgWindow);
+    rootStyle.setProperty('--bg-surface', shades.bgSurface);
+    rootStyle.setProperty('--bg-surface-hover', shades.bgSurfaceHover);
+    rootStyle.setProperty('--bg-surface-active', shades.bgSurfaceActive);
+    rootStyle.setProperty('--bg-popover', shades.bgPopover);
+    rootStyle.setProperty('--border-window', shades.borderWindow);
+    rootStyle.setProperty('--border-subtle', shades.borderSubtle);
+    rootStyle.setProperty('--border-hover', shades.borderHover);
+    rootStyle.setProperty('--text-primary', shades.textPrimary);
+    rootStyle.setProperty('--text-secondary', shades.textSecondary);
+    rootStyle.setProperty('--text-muted', shades.textMuted);
+    rootStyle.setProperty('--text-disabled', shades.textDisabled);
+    rootStyle.setProperty('--accent-solid', shades.accentSolid);
+    rootStyle.setProperty('--accent-hover', shades.accentHover);
+    rootStyle.setProperty('--accent-subtle', shades.accentSubtle);
+    rootStyle.setProperty('--accent-text', shades.accentText);
+    rootStyle.setProperty('--accent-contrast', shades.accentContrast);
+    rootStyle.setProperty('--shadow-window', shades.shadowWindow);
+
+    // Sync UI elements
+    if (colorActiveSwatch) {
+        colorActiveSwatch.style.backgroundColor = cleanHex;
+    }
+    if (colorHexInput && document.activeElement !== colorHexInput) {
+        colorHexInput.value = cleanHex.replace('#', '').toUpperCase();
+    }
+    if (nativeColorPicker) {
+        nativeColorPicker.value = cleanHex;
+    }
+
+    // Preset chips highlight
+    if (colorPresetsRow) {
+        colorPresetsRow.querySelectorAll('.preset-chip').forEach(chip => {
+            const chipColor = (chip.dataset.color || '').toLowerCase();
+            chip.classList.toggle('active', chipColor === cleanHex);
+        });
+    }
+
+    const rgb = hexToRgb(cleanHex);
+    const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+
+    if (syncControls) {
+        if (hsl.s > 4) {
+            _currentThemeH = hsv.h;
+        }
+        _currentThemeS = hsv.s;
+        _currentThemeV = hsv.v;
+
+        if (colorHueSlider) {
+            colorHueSlider.value = _currentThemeH;
+        }
+        if (hueValLabel) {
+            hueValLabel.textContent = _currentThemeH + '°';
+        }
+        if (colorLightnessSlider) {
+            colorLightnessSlider.value = hsl.l;
+            colorLightnessSlider.style.background = `linear-gradient(to right, #000000, hsl(${_currentThemeH}, 100%, 50%), #ffffff)`;
+        }
+        if (lightnessValLabel) {
+            lightnessValLabel.textContent = hsl.l + '%';
+        }
+        if (colorSvBox) {
+            colorSvBox.style.backgroundColor = `hsl(${_currentThemeH}, 100%, 50%)`;
+        }
+        if (colorSvCursor) {
+            colorSvCursor.style.left = (_currentThemeS * 100) + '%';
+            colorSvCursor.style.top = ((1 - _currentThemeV) * 100) + '%';
+        }
+    }
+
+    if (persist) {
+        try {
+            localStorage.setItem('todo_widget_theme_color', cleanHex);
+        } catch (e) {}
+        persistState();
+    }
+}
+
+function initColorStudio() {
+    if (!colorSvBox || !colorHueSlider) return;
+
+    // 1. Presets Chips
+    if (colorPresetsRow) {
+        colorPresetsRow.querySelectorAll('.preset-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                const col = chip.dataset.color;
+                if (col) {
+                    applyThemeColor(col, true, true);
+                }
+            });
+        });
+    }
+
+    // 2. 2D SV Box Dragging
+    let isDragging = false;
+
+    function handleSvMove(clientX, clientY) {
+        const rect = colorSvBox.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+
+        const x = Math.max(0, Math.min(rect.width, clientX - rect.left));
+        const y = Math.max(0, Math.min(rect.height, clientY - rect.top));
+
+        _currentThemeS = x / rect.width;
+        _currentThemeV = 1 - (y / rect.height);
+
+        colorSvCursor.style.left = (_currentThemeS * 100) + '%';
+        colorSvCursor.style.top = ((1 - _currentThemeV) * 100) + '%';
+
+        const rgb = hsvToRgb(_currentThemeH, _currentThemeS, _currentThemeV);
+        const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+        applyThemeColor(hex, false, true);
+
+        const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        if (colorLightnessSlider) colorLightnessSlider.value = hsl.l;
+        if (lightnessValLabel) lightnessValLabel.textContent = hsl.l + '%';
+    }
+
+    colorSvBox.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        colorSvBox.setPointerCapture(e.pointerId);
+        handleSvMove(e.clientX, e.clientY);
+    });
+
+    colorSvBox.addEventListener('pointermove', (e) => {
+        if (isDragging) {
+            handleSvMove(e.clientX, e.clientY);
+        }
+    });
+
+    const stopDragging = (e) => {
+        if (isDragging) {
+            isDragging = false;
+            try { colorSvBox.releasePointerCapture(e.pointerId); } catch (err) {}
+        }
+    };
+    colorSvBox.addEventListener('pointerup', stopDragging);
+    colorSvBox.addEventListener('pointercancel', stopDragging);
+
+    // 3. Hue Slider (0 - 360)
+    colorHueSlider.addEventListener('input', () => {
+        _currentThemeH = parseInt(colorHueSlider.value, 10);
+        if (hueValLabel) hueValLabel.textContent = _currentThemeH + '°';
+
+        colorSvBox.style.backgroundColor = `hsl(${_currentThemeH}, 100%, 50%)`;
+        colorLightnessSlider.style.background = `linear-gradient(to right, #000000, hsl(${_currentThemeH}, 100%, 50%), #ffffff)`;
+
+        if (_currentThemeS < 0.05 && _currentThemeV < 0.05) {
+            _currentThemeS = 0.85;
+            _currentThemeV = 0.25;
+            colorSvCursor.style.left = (_currentThemeS * 100) + '%';
+            colorSvCursor.style.top = ((1 - _currentThemeV) * 100) + '%';
+        }
+
+        const rgb = hsvToRgb(_currentThemeH, _currentThemeS, _currentThemeV);
+        const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+
+        applyThemeColor(hex, false, true);
+
+        const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        if (colorLightnessSlider) colorLightnessSlider.value = hsl.l;
+        if (lightnessValLabel) lightnessValLabel.textContent = hsl.l + '%';
+    });
+
+    // 4. Lightness / Shade Slider (0 - 100)
+    colorLightnessSlider.addEventListener('input', () => {
+        const targetL = parseInt(colorLightnessSlider.value, 10);
+        if (lightnessValLabel) lightnessValLabel.textContent = targetL + '%';
+
+        const curRgb = hexToRgb(state.settings.themeColor || '#000000');
+        const curHsl = rgbToHsl(curRgb.r, curRgb.g, curRgb.b);
+        const effectiveHue = curHsl.s > 4 ? curHsl.h : _currentThemeH;
+        const effectiveSat = curHsl.s > 4 ? curHsl.s : (_currentThemeS > 0.05 ? Math.round(_currentThemeS * 100) : 80);
+
+        const newHex = hslToHex(effectiveHue, effectiveSat, targetL);
+        applyThemeColor(newHex, true, true);
+    });
+
+    // 5. Hex Input
+    colorHexInput.addEventListener('input', () => {
+        let val = colorHexInput.value.replace(/[^0-9a-fA-F]/g, '');
+        if (val.length === 6) {
+            applyThemeColor('#' + val, true, true);
+        }
+    });
+
+    colorHexInput.addEventListener('blur', () => {
+        let val = colorHexInput.value.replace(/[^0-9a-fA-F]/g, '');
+        if (val.length === 3) {
+            val = val.split('').map(c => c + c).join('');
+            applyThemeColor('#' + val, true, true);
+        } else if (val.length !== 6) {
+            colorHexInput.value = (state.settings.themeColor || '#000000').replace('#', '').toUpperCase();
+        }
+    });
+
+    colorHexInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            colorHexInput.blur();
+        }
+    });
+
+    // 6. Eyedropper / System Picker
+    if (btnEyedropper) {
+        btnEyedropper.addEventListener('click', async () => {
+            if (window.EyeDropper) {
+                try {
+                    const eyeDropper = new window.EyeDropper();
+                    const result = await eyeDropper.open();
+                    if (result && result.sRGBHex) {
+                        applyThemeColor(result.sRGBHex, true, true);
+                        showToast('Color picked');
+                    }
+                } catch (e) {
+                    // canceled
+                }
+            } else if (nativeColorPicker) {
+                nativeColorPicker.click();
+            }
+        });
+    }
+
+    if (nativeColorPicker) {
+        nativeColorPicker.addEventListener('input', () => {
+            applyThemeColor(nativeColorPicker.value, true, true);
+        });
+    }
+
+    // 7. Reset to Default Pure Black
+    if (btnResetColor) {
+        btnResetColor.addEventListener('click', () => {
+            applyThemeColor('#000000', true, true);
+            showToast('Reset to Pitch Black');
+        });
+    }
+
+    // Initial controls sync
+    applyThemeColor(state.settings.themeColor || '#000000', true, false);
 }
 
 // ==========================================================================
@@ -665,6 +1225,9 @@ btnSearchClear.addEventListener('click', () => {
 
 btnSettings.addEventListener('click', () => {
     settingsDrawer.classList.remove('hidden');
+    setTimeout(() => {
+        applyThemeColor(state.settings.themeColor || '#000000', true, false);
+    }, 40);
 });
 
 btnCloseSettings.addEventListener('click', () => {
