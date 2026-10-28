@@ -80,6 +80,101 @@ html, body {
 }
 
 /* ==========================================================================
+   RESIZING HANDLES (Native Frameless Resize Support)
+   ========================================================================== */
+.resize-handle {
+    position: absolute;
+    z-index: 99999;
+    user-select: none;
+    pointer-events: auto;
+}
+
+.resize-edge-t {
+    top: 0;
+    left: 14px;
+    right: 14px;
+    height: 7px;
+    cursor: ns-resize;
+}
+
+.resize-edge-b {
+    bottom: 0;
+    left: 14px;
+    right: 14px;
+    height: 7px;
+    cursor: ns-resize;
+}
+
+.resize-edge-l {
+    top: 14px;
+    bottom: 14px;
+    left: 0;
+    width: 7px;
+    cursor: ew-resize;
+}
+
+.resize-edge-r {
+    top: 14px;
+    bottom: 14px;
+    right: 0;
+    width: 7px;
+    cursor: ew-resize;
+}
+
+.resize-corner-tl {
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nwse-resize;
+}
+
+.resize-corner-tr {
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nesw-resize;
+}
+
+.resize-corner-bl {
+    bottom: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    cursor: nesw-resize;
+}
+
+.resize-corner-br {
+    bottom: 0;
+    right: 0;
+    width: 18px;
+    height: 18px;
+    cursor: nwse-resize;
+}
+
+.widget-container.position-locked .resize-handle,
+.widget-container.position-locked .resize-grip-indicator,
+.widget-container.collapsed-tasks-only .resize-handle,
+.widget-container.collapsed-tasks-only .resize-grip-indicator {
+    display: none !important;
+}
+
+.resize-grip-indicator {
+    position: absolute;
+    bottom: 3px;
+    right: 4px;
+    color: var(--text-muted);
+    opacity: 0.35;
+    pointer-events: none;
+    transition: opacity var(--transition-fast);
+}
+
+.widget-container:hover .resize-grip-indicator {
+    opacity: 0.7;
+}
+
+/* ==========================================================================
    HEADER
    ========================================================================== */
 .widget-header {

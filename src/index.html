@@ -11,6 +11,16 @@
     <!-- Main Widget Container -->
     <div id="widget-container" class="widget-container">
         
+        <!-- Resizing Handles (All edges and corners) -->
+        <div class="resize-handle resize-edge-t" data-edge="top"></div>
+        <div class="resize-handle resize-edge-b" data-edge="bottom"></div>
+        <div class="resize-handle resize-edge-l" data-edge="left"></div>
+        <div class="resize-handle resize-edge-r" data-edge="right"></div>
+        <div class="resize-handle resize-corner-tl" data-edge="top-left"></div>
+        <div class="resize-handle resize-corner-tr" data-edge="top-right"></div>
+        <div class="resize-handle resize-corner-bl" data-edge="bottom-left"></div>
+        <div class="resize-handle resize-corner-br" data-edge="bottom-right"></div>
+
         <!-- Minimal Collapsed Header Bar (Visible ONLY when collapsed to show tasks) -->
         <div id="collapsed-bar" class="collapsed-bar">
             <div class="collapsed-drag-area">
@@ -156,6 +166,16 @@
                     </div>
                 </div>
             </form>
+            <div class="resize-grip-indicator" title="Drag to Resize">
+                <svg width="7" height="7" viewBox="0 0 8 8" fill="none">
+                    <circle cx="7" cy="7" r="1" fill="currentColor"/>
+                    <circle cx="7" cy="4" r="1" fill="currentColor"/>
+                    <circle cx="4" cy="7" r="1" fill="currentColor"/>
+                    <circle cx="7" cy="1" r="1" fill="currentColor"/>
+                    <circle cx="4" cy="4" r="1" fill="currentColor"/>
+                    <circle cx="1" cy="7" r="1" fill="currentColor"/>
+                </svg>
+            </div>
         </footer>
 
         <!-- SETTINGS DRAWER (Cleaned & Minimal) -->

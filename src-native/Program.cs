@@ -87,6 +87,17 @@ namespace DesktopToDoWidget
         private const int WM_EXITSIZEMOVE = 0x0232;
         private const int WM_HOTKEY = 0x0312;
         private const int CS_DROPSHADOW = 0x00020000;
+        private const int WS_THICKFRAME = 0x00040000;
+        private const int WM_NCCALCSIZE = 0x0083;
+
+        private const int HTLEFT = 10;
+        private const int HTRIGHT = 11;
+        private const int HTTOP = 12;
+        private const int HTTOPLEFT = 13;
+        private const int HTTOPRIGHT = 14;
+        private const int HTBOTTOM = 15;
+        private const int HTBOTTOMLEFT = 16;
+        private const int HTBOTTOMRIGHT = 17;
 
         private const uint MOD_ALT = 0x0001;
         private const uint MOD_CONTROL = 0x0002;
@@ -145,6 +156,7 @@ namespace DesktopToDoWidget
             {
                 CreateParams cp = base.CreateParams;
                 cp.ClassStyle |= CS_DROPSHADOW;
+                cp.Style |= WS_THICKFRAME;
                 return cp;
             }
         }
@@ -158,6 +170,8 @@ namespace DesktopToDoWidget
             this.BackColor = Color.Black;
             this.Width = fullWidth;
             this.Height = fullHeight;
+            this.MinimumSize = new Size(280, 220);
+            this.MaximumSize = new Size(900, 1400);
 
             jsonSerializer = new JavaScriptSerializer();
             appDirectory = AppDomain.CurrentDomain.BaseDirectory;
@@ -232,6 +246,12 @@ namespace DesktopToDoWidget
 
         protected override void WndProc(ref Message m)
         {
+            if (m.Msg == WM_NCCALCSIZE && m.WParam.ToInt32() == 1)
+            {
+                m.Result = IntPtr.Zero;
+                return;
+            }
+
             if (m.Msg == WM_SYSCOMMAND && (m.WParam.ToInt32() & 0xFFF0) == SC_MINIMIZE)
             {
                 return;
@@ -619,6 +639,7 @@ namespace DesktopToDoWidget
                         setAutoStart: (enable) => callNative('setAutoStart', enable),
                         sendNotification: (title, body) => callNative('sendNotification', { title, body }),
                         startDrag: () => callNative('startDrag'),
+                        startResize: (edge) => callNative('startResize', edge),
                         onTrayAction: (callback) => {
                             trayListeners.push(callback);
                         }
@@ -628,6 +649,18 @@ namespace DesktopToDoWidget
                         if (e.button !== 0) return;
                         const widget = document.getElementById('widget-container');
                         if (widget && widget.classList.contains('position-locked')) return;
+
+                        // Check if clicked directly on a resize handle
+                        const resizeHandle = e.target.closest('.resize-handle');
+                        if (resizeHandle) {
+                            const edge = resizeHandle.dataset.edge;
+                            if (edge) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.chrome.webview.postMessage({ action: 'startResize', payload: edge });
+                                return;
+                            }
+                        }
 
                         let el = e.target;
                         while (el && el !== document.body) {
@@ -685,6 +718,30 @@ namespace DesktopToDoWidget
 
                 switch (action)
                 {
+                    case "startResize":
+                        if (!isPositionLocked && !isMiniMode)
+                        {
+                            string edge = Convert.ToString(payload);
+                            int htCode = 0;
+                            switch (edge.ToLowerInvariant())
+                            {
+                                case "left": htCode = HTLEFT; break;
+                                case "right": htCode = HTRIGHT; break;
+                                case "top": htCode = HTTOP; break;
+                                case "top-left": htCode = HTTOPLEFT; break;
+                                case "top-right": htCode = HTTOPRIGHT; break;
+                                case "bottom": htCode = HTBOTTOM; break;
+                                case "bottom-left": htCode = HTBOTTOMLEFT; break;
+                                case "bottom-right": htCode = HTBOTTOMRIGHT; break;
+                            }
+                            if (htCode > 0)
+                            {
+                                ReleaseCapture();
+                                SendMessage(this.Handle, WM_NCLBUTTONDOWN, (IntPtr)htCode, IntPtr.Zero);
+                            }
+                        }
+                        break;
+
                     case "startDrag":
                         if (!isPositionLocked)
                         {
